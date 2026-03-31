@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-bg-base: #EBEBE6;
+  --color-mutton-white: #F8F8F5;
+  --color-cyan-blue: #1C2B2D;
+  --color-silver-gray: #8E9496;
+  --color-low-gold: #C8B897;
+  --color-stamp-red: #9B2E2E;
+  
+  --font-serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+  --font-sans: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+body {
+  background-color: var(--color-bg-base);
+  /* Subtle paper/artifact noise texture */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+  color: var(--color-cyan-blue);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  padding: 0;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+/* Custom utility for the ticket notches */
+.ticket-notch-left {
+  mask-image: radial-gradient(circle at 0 50%, transparent 8px, black 9px);
+}
+.ticket-notch-right {
+  mask-image: radial-gradient(circle at 100% 50%, transparent 8px, black 9px);
+}
+.ticket-notches {
+  mask-image: radial-gradient(circle at 0 0, transparent 8px, black 9px),
+              radial-gradient(circle at 100% 0, transparent 8px, black 9px);
+  mask-size: 51% 100%;
+  mask-repeat: no-repeat;
+  mask-position: left, right;
+}
