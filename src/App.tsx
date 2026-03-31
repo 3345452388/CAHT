@@ -107,26 +107,26 @@ const HomeTab = ({ onOpenFlow, tag, hasMatched, onOpenSubView, onChangeTab, spot
   return (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-24">
     {/* Step Indicator */}
-    <div className="pt-12 pb-8 px-6 bg-mutton-white">
+    <div className="pt-6 pb-4 px-8 bg-mutton-white">
       <div className="flex justify-between items-center relative">
         <div className="absolute left-0 right-0 top-1/2 h-[1px] bg-silver-gray/20 -z-10 -translate-y-1/2"></div>
         
         {/* Step 1 */}
-        <div className="flex flex-col items-center gap-2 bg-mutton-white px-2">
-          <div className={`w-2 h-2 rounded-full ${tag ? 'bg-stamp-red' : 'bg-silver-gray'}`}></div>
-          <span className={`text-[10px] tracking-widest ${tag ? 'text-stamp-red' : 'text-silver-gray'}`}>激活鱼符</span>
+        <div className="flex flex-col items-center gap-1.5 bg-mutton-white px-2">
+          <div className={`w-1.5 h-1.5 rounded-full ${tag ? 'bg-stamp-red' : 'bg-silver-gray'}`}></div>
+          <span className={`text-[9px] tracking-widest ${tag ? 'text-stamp-red' : 'text-silver-gray'}`}>激活鱼符</span>
         </div>
         
         {/* Step 2 */}
-        <div className="flex flex-col items-center gap-2 bg-mutton-white px-2">
-          <div className={`w-2 h-2 rounded-full ${completedCount > 0 ? 'bg-stamp-red' : 'bg-silver-gray'}`}></div>
-          <span className={`text-[10px] tracking-widest ${completedCount > 0 ? 'text-stamp-red' : 'text-silver-gray'}`}>探索展馆</span>
+        <div className="flex flex-col items-center gap-1.5 bg-mutton-white px-2">
+          <div className={`w-1.5 h-1.5 rounded-full ${completedCount > 0 ? 'bg-stamp-red' : 'bg-silver-gray'}`}></div>
+          <span className={`text-[9px] tracking-widest ${completedCount > 0 ? 'text-stamp-red' : 'text-silver-gray'}`}>探索展馆</span>
         </div>
         
         {/* Step 3 */}
-        <div className="flex flex-col items-center gap-2 bg-mutton-white px-2">
-          <div className={`w-2 h-2 rounded-full ${hasMatched ? 'bg-stamp-red' : 'bg-silver-gray'}`}></div>
-          <span className={`text-[10px] tracking-widest ${hasMatched ? 'text-stamp-red' : 'text-silver-gray'}`}>完成合符</span>
+        <div className="flex flex-col items-center gap-1.5 bg-mutton-white px-2">
+          <div className={`w-1.5 h-1.5 rounded-full ${hasMatched ? 'bg-stamp-red' : 'bg-silver-gray'}`}></div>
+          <span className={`text-[9px] tracking-widest ${hasMatched ? 'text-stamp-red' : 'text-silver-gray'}`}>完成合符</span>
         </div>
       </div>
     </div>
@@ -806,27 +806,8 @@ export default function App() {
     }
   }, [hasInitialized, userTag]);
 
-  const currentStep = !userTag ? 1 : (!hasMatched ? 2 : 3);
-  const steps = ['激活鱼符', '探索长安', '完成合符'];
-
   return (
     <div className="max-w-md mx-auto h-screen shadow-2xl overflow-hidden relative bg-[var(--color-bg-base)] flex flex-col">
-      {/* Global Progress Indicator */}
-      <div className="pt-8 pb-2 px-6 flex justify-between items-center bg-[var(--color-bg-base)] z-10 relative">
-        <div className="absolute bottom-0 left-6 right-6 h-[1px] bg-silver-gray/10"></div>
-        {steps.map((stepName, index) => {
-          const stepNum = index + 1;
-          const isActive = currentStep === stepNum;
-          const isPast = currentStep > stepNum;
-          return (
-            <div key={index} className={`flex flex-col items-center gap-1 ${isActive ? 'text-cyan-blue' : isPast ? 'text-cyan-blue/50' : 'text-silver-gray/30'}`}>
-              <div className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-stamp-red' : isPast ? 'bg-cyan-blue/50' : 'bg-silver-gray/30'}`}></div>
-              <span className="font-mono text-[9px] tracking-widest">{stepName}</span>
-            </div>
-          );
-        })}
-      </div>
-
       {/* Main Tabs Area */}
       <div className="flex-1 overflow-y-auto">
         {activeTab === 'home' && <HomeTab onOpenFlow={setActiveFlow} tag={userTag} hasMatched={hasMatched} onOpenSubView={setSubViewState} onChangeTab={setActiveTab} spots={spots} />}
