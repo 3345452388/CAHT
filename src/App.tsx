@@ -563,13 +563,13 @@ const ActivationFlow = ({ onClose, onComplete }: { onClose: () => void, onComple
       </div>
       
       {step === 1 && (
-        <div className="flex-1 flex flex-col p-8">
-          <div className="text-center mb-12 mt-8">
-            <h2 className="font-serif text-3xl text-cyan-blue mb-4 tracking-[0.2em]">激活鱼符</h2>
+        <div className="flex-1 flex flex-col p-6">
+          <div className="text-center mb-8 mt-4">
+            <h2 className="font-serif text-3xl text-cyan-blue mb-3 tracking-[0.2em]">激活鱼符</h2>
             <p className="text-silver-gray text-xs tracking-[0.2em] uppercase font-mono">完成实体票证与数字身份绑定</p>
           </div>
           
-          <div className="flex justify-center gap-4 mb-16">
+          <div className="flex justify-center gap-4 mb-8">
             <div className="flex flex-col items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-cyan-blue text-mutton-white flex items-center justify-center text-xs font-mono">1</div>
               <span className="text-[10px] text-cyan-blue tracking-widest">靠近鱼符</span>
@@ -586,15 +586,16 @@ const ActivationFlow = ({ onClose, onComplete }: { onClose: () => void, onComple
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col items-center justify-center relative">
+          <div className="flex-1 flex flex-col items-center justify-center relative min-h-[200px] mb-8">
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-48 h-48 rounded-full border-[1px] border-cyan-blue/20 animate-ping" style={{ animationDuration: '3s' }}></div>
-              <div className="w-32 h-32 rounded-full border-[1px] border-cyan-blue/40 absolute"></div>
+              <div className="w-24 h-24 rounded-full border-[1px] border-cyan-blue/40 animate-ping" style={{ animationDuration: '3s' }}></div>
+              <div className="w-32 h-32 rounded-full border-[1px] border-cyan-blue/20 absolute"></div>
+              <div className="w-40 h-40 rounded-full border-[1px] border-cyan-blue/10 absolute"></div>
             </div>
             <div className="w-24 h-24 bg-mutton-white rounded-full shadow-[0_0_30px_rgba(28,43,45,0.1)] flex items-center justify-center relative z-10 border-[0.5px] border-silver-gray/20">
               <Scan className="w-10 h-10 text-cyan-blue" strokeWidth={1.5} />
             </div>
-            <p className="mt-8 text-xs text-cyan-blue tracking-widest font-serif relative z-10">等待感应...</p>
+            <p className="mt-16 text-xs text-cyan-blue tracking-widest font-serif relative z-10">等待感应...</p>
           </div>
 
           <div className="mt-auto space-y-4 relative z-20">
@@ -617,13 +618,13 @@ const ActivationFlow = ({ onClose, onComplete }: { onClose: () => void, onComple
       )}
 
       {step === 3 && (
-        <div className="flex-1 flex flex-col p-8">
-          <div className="text-center mb-12 mt-8">
-            <h2 className="font-serif text-3xl text-cyan-blue mb-4 tracking-[0.2em]">激活鱼符</h2>
+        <div className="flex-1 flex flex-col p-6">
+          <div className="text-center mb-8 mt-4">
+            <h2 className="font-serif text-3xl text-cyan-blue mb-3 tracking-[0.2em]">激活鱼符</h2>
             <p className="text-silver-gray text-xs tracking-[0.2em] uppercase font-mono">完成实体票证与数字身份绑定</p>
           </div>
           
-          <div className="flex justify-center gap-4 mb-12">
+          <div className="flex justify-center gap-4 mb-8">
             <div className="flex flex-col items-center gap-2 opacity-30">
               <div className="w-8 h-8 rounded-full bg-silver-gray text-mutton-white flex items-center justify-center text-xs font-mono">1</div>
               <span className="text-[10px] text-silver-gray tracking-widest">靠近鱼符</span>
@@ -640,7 +641,7 @@ const ActivationFlow = ({ onClose, onComplete }: { onClose: () => void, onComple
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col items-center justify-center">
+          <div className="flex-1 flex flex-col items-center justify-center mb-8">
             <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-6">
               <CheckCircle2 className="w-10 h-10 text-green-500" />
             </div>
