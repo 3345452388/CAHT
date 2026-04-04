@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>长安合同 - 社交票证系统</title>
+    <meta
+      name="description"
+      content="长安合同是一个以汉唐文创为主题的社交票证系统，围绕鱼符机制、身份绑定、展馆导览、互动打卡与社交连接展开。"
+    />
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        background: #ebebe6;
+        color: #1c2b2d;
+        font-family: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+      }
+
+      html.js #static-fallback {
+        display: none;
+      }
+
+      #static-fallback {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 56px 24px 72px;
+        line-height: 1.75;
+        box-sizing: border-box;
+      }
+
+      #static-fallback h1 {
+        margin: 0 0 12px;
+        font-size: 40px;
+        line-height: 1.2;
+        font-weight: 700;
+        color: #1c2b2d;
+      }
+
+      #static-fallback .subtitle {
+        margin: 0 0 20px;
+        font-size: 18px;
+        color: #8e9496;
+      }
+
+      #static-fallback h2 {
+        margin: 32px 0 12px;
+        font-size: 20px;
+        line-height: 1.4;
+        font-weight: 700;
+        color: #1c2b2d;
+      }
+
+      #static-fallback p,
+      #static-fallback li {
+        font-size: 16px;
+        color: #1c2b2d;
+      }
+
+      #root {
+        min-height: 100vh;
+      }
+    </style>
+
+    <script>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+
+  <body>
+    <section id="static-fallback" aria-label="项目静态说明">
+      <h1>长安合同</h1>
+      <p class="subtitle">汉唐文创社交票证系统</p>
+
+      <p>
+        本项目以汉唐鱼符文化为设计灵感，将传统符契机制转译为面向当代博物馆与文化活动场景的社交票证产品。
+      </p>
+
+      <h2>项目定位</h2>
+      <p>
+        通过“实体票证 + 数字身份 + 场景互动”的方式，建立从入场、激活、导览、打卡到社交连接的完整体验流程。
+      </p>
+
+      <h2>核心流程</h2>
+      <ol>
+        <li>领取票证</li>
+        <li>激活鱼符</li>
+        <li>完成实体票证与数字身份绑定</li>
+        <li>进入展馆导览与任务流程</li>
+        <li>完成打卡、互动与社交匹配</li>
+        <li>形成纪念留存与文化传播</li>
+      </ol>
+    </section>
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
