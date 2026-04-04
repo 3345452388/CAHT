@@ -158,79 +158,144 @@ const HomeTab = ({ onOpenFlow, tag, hasMatched, spots, sensingEnabled, onChangeT
     }
   }
 
+  const nextSpot = spots.find(s => s.status === '未打卡');
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 pb-24 space-y-6">
-      {/* 一、顶部状态卡 */}
-      <div className="bg-cyan-blue text-mutton-white p-8 rounded-sm shadow-md relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-48 h-48 bg-mutton-white/5 rounded-full -mr-16 -mt-16 pointer-events-none"></div>
+      {/* 一、顶部状态驾驶舱 */}
+      <div className="bg-cyan-blue text-mutton-white p-8 rounded-sm shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-mutton-white/5 rounded-full -mr-24 -mt-24 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-low-gold/5 rounded-full -ml-16 -mb-16 pointer-events-none"></div>
+        
         <div className="relative z-10">
-          <div className="mb-6">
-            <p className="text-[10px] tracking-widest text-mutton-white/60 mb-1">当前活动名称</p>
-            <h3 className="text-sm tracking-widest text-mutton-white">陕西历史博物馆导览</h3>
-          </div>
-
-          <div className="flex justify-between items-end mb-6">
+          <div className="flex justify-between items-start mb-10">
             <div>
-              <p className="text-[10px] tracking-widest text-mutton-white/60 mb-1">当前状态</p>
-              <h2 className="font-serif text-3xl tracking-[0.2em]">{currentStatus}</h2>
+              <p className="text-[10px] tracking-[0.3em] text-mutton-white/50 mb-2 uppercase font-mono">Current Status</p>
+              <h2 className="font-serif text-5xl tracking-[0.2em] text-mutton-white">{currentStatus}</h2>
             </div>
             <div className="text-right">
-              <p className="text-[10px] tracking-widest text-mutton-white/60 mb-1">票证编号</p>
-              <span className="text-xs font-mono text-low-gold">NO. CA-8492</span>
+              <p className="text-[10px] tracking-[0.2em] text-mutton-white/50 mb-1 uppercase font-mono">Ticket No.</p>
+              <span className="text-xs font-mono text-low-gold/80">CA-8492</span>
             </div>
           </div>
 
-          <div className="mb-8">
-            <p className="text-[10px] tracking-widest text-mutton-white/60 mb-1">当前身份标签</p>
-            <span className="text-sm tracking-widest">{tag || '暂无标签'}</span>
+          <div className="grid grid-cols-2 gap-4 mb-10">
+            <div>
+              <p className="text-[10px] tracking-widest text-mutton-white/40 mb-1">活动名称</p>
+              <h3 className="text-xs tracking-widest text-mutton-white/90 truncate">陕西历史博物馆导览</h3>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] tracking-widest text-mutton-white/40 mb-1">身份标签</p>
+              <span className="text-xs tracking-widest text-mutton-white/90">{tag || '待激活'}</span>
+            </div>
           </div>
 
-          <button onClick={primaryAction} className="w-full py-4 bg-low-gold text-cyan-blue text-sm tracking-[0.2em] rounded-sm font-medium shadow-md active:scale-[0.98] transition-transform flex justify-center items-center gap-2">
+          <button 
+            onClick={primaryAction} 
+            className="w-full py-5 bg-low-gold text-cyan-blue text-sm tracking-[0.3em] rounded-sm font-bold shadow-[0_4px_20px_rgba(184,161,114,0.3)] active:scale-[0.97] transition-all flex justify-center items-center gap-3 group"
+          >
             {primaryActionText}
+            <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </div>
 
-      {/* 二、当前任务区 */}
+      {/* 二、当前任务系统 */}
       {tag && (
-        <div className="bg-mutton-white border-[0.5px] border-silver-gray/30 p-5 rounded-sm shadow-sm">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-serif tracking-widest text-cyan-blue">当前路线进度</h3>
-            <span className="text-xs font-mono text-silver-gray">{completedCount} / {totalSpots}</span>
-          </div>
-          <div className="w-full h-1 bg-silver-gray/10 rounded-full mb-6 overflow-hidden">
-            <div className="h-full bg-cyan-blue transition-all duration-500" style={{ width: `${(completedCount / totalSpots) * 100}%` }}></div>
-          </div>
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-cyan-blue/5 flex items-center justify-center shrink-0">
-              <MapPin size={18} className="text-cyan-blue" />
+        <div className="bg-mutton-white border-[0.5px] border-silver-gray/20 p-6 rounded-sm shadow-sm relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-1 h-full bg-low-gold/20"></div>
+          
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-low-gold rounded-full"></div>
+              <h3 className="text-xs font-serif tracking-[0.2em] text-cyan-blue uppercase">Mission / 当前任务</h3>
             </div>
-            <div>
-              <p className="text-[10px] text-silver-gray tracking-widest mb-1">下一个推荐点位</p>
-              <p className="text-sm tracking-widest text-cyan-blue mb-1">{spots.find(s => s.status === '未打卡')?.name || '已全部完成'}</p>
-              <p className="text-[10px] text-silver-gray tracking-widest">预计步行 5 分钟 · 可解锁专属徽章</p>
+            <span className="text-[10px] font-mono text-silver-gray tracking-widest">PROGRESS: {completedCount}/{totalSpots}</span>
+          </div>
+
+          <div className="space-y-6">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-sm bg-cyan-blue/5 border-[0.5px] border-cyan-blue/10 flex items-center justify-center shrink-0">
+                <MapPin size={18} className="text-cyan-blue" />
+              </div>
+              <div className="flex-1">
+                <p className="text-[10px] text-silver-gray tracking-widest mb-1 uppercase font-mono">Next Target / 下一目标点位</p>
+                <p className="text-sm tracking-[0.1em] text-cyan-blue font-medium">{nextSpot?.name || '已全部完成'}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-sm bg-low-gold/5 border-[0.5px] border-low-gold/10 flex items-center justify-center shrink-0">
+                <Ticket size={18} className="text-low-gold" />
+              </div>
+              <div className="flex-1">
+                <p className="text-[10px] text-silver-gray tracking-widest mb-1 uppercase font-mono">Unlock / 完成后解锁内容</p>
+                <p className="text-xs tracking-widest text-cyan-blue/80">专属文物印记 · 路线深度解析</p>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-[9px] text-silver-gray tracking-widest uppercase">Route Completion</span>
+                <span className="text-[9px] font-mono text-cyan-blue">{Math.round((completedCount / totalSpots) * 100)}%</span>
+              </div>
+              <div className="w-full h-1 bg-silver-gray/10 rounded-full overflow-hidden">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${(completedCount / totalSpots) * 100}%` }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="h-full bg-cyan-blue"
+                ></motion.div>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* 三、社交提示区 */}
-      <div className="bg-mutton-white border-[0.5px] border-silver-gray/30 p-5 rounded-sm shadow-sm">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-sm font-serif tracking-widest text-cyan-blue flex items-center gap-2">
+      {/* 三、社交感应区 */}
+      <div className="bg-mutton-white border-[0.5px] border-silver-gray/20 p-6 rounded-sm shadow-sm relative overflow-hidden">
+        {sensingEnabled && (
+          <div className="absolute top-0 right-0 p-4">
+            <div className="relative">
+              <div className="w-2 h-2 bg-stamp-red rounded-full animate-ping absolute"></div>
+              <div className="w-2 h-2 bg-stamp-red rounded-full relative"></div>
+            </div>
+          </div>
+        )}
+        
+        <div className="flex items-center gap-3 mb-4">
+          <div className={`p-2 rounded-full ${sensingEnabled ? 'bg-stamp-red/5' : 'bg-silver-gray/5'}`}>
             <Radio size={16} className={sensingEnabled ? 'text-stamp-red' : 'text-silver-gray'} />
-            同好感应
-          </h3>
-          <span className={`text-[10px] tracking-widest px-2 py-0.5 rounded-sm ${sensingEnabled ? 'bg-stamp-red/10 text-stamp-red' : 'bg-silver-gray/10 text-silver-gray'}`}>
-            {sensingEnabled ? '感应中' : '已关闭'}
-          </span>
+          </div>
+          <div>
+            <h3 className="text-xs font-serif tracking-[0.2em] text-cyan-blue">同好感应</h3>
+            <p className="text-[9px] text-silver-gray tracking-widest uppercase font-mono">Social Sensing</p>
+          </div>
         </div>
-        <p className="text-xs text-silver-gray tracking-widest leading-relaxed mb-4">
-          {sensingEnabled ? '附近存在 2 名可互动对象，建议保持关注。' : '开启感应以发现附近路线相近的同好。'}
-        </p>
-        <button onClick={() => onChangeTab('profile')} className="w-full py-3 bg-silver-gray/5 text-cyan-blue text-xs tracking-widest rounded-sm border-[0.5px] border-silver-gray/20 active:scale-[0.98] transition-transform">
-          管理感应设置
-        </button>
+
+        <div className="relative mb-6">
+          {sensingEnabled ? (
+            <div className="space-y-3">
+              <p className="text-xs text-cyan-blue/80 tracking-widest leading-relaxed">
+                感应场已建立。附近发现 <span className="text-stamp-red font-mono font-bold">2</span> 名潜在同好，路线重合度极高。
+              </p>
+              <div className="flex gap-1">
+                {[1, 2, 3].map(i => (
+                  <motion.div 
+                    key={i}
+                    animate={{ opacity: [0.2, 0.5, 0.2] }}
+                    transition={{ duration: 2, delay: i * 0.4, repeat: Infinity }}
+                    className="h-0.5 flex-1 bg-stamp-red/20 rounded-full"
+                  ></motion.div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="text-xs text-silver-gray tracking-widest leading-relaxed">
+              开启感应以发现附近路线相近的同好，开启一段跨越时空的“合符”之旅。
+            </p>
+          )}
+        </div>
       </div>
     </motion.div>
   );
@@ -239,153 +304,277 @@ const HomeTab = ({ onOpenFlow, tag, hasMatched, spots, sensingEnabled, onChangeT
 const MapTab = ({ onOpenFlow, onOpenSubView, onSelectSpot, spots }: { onOpenFlow: (flow: FlowState) => void, onOpenSubView: (view: SubViewState) => void, onSelectSpot: (spot: any) => void, spots: any[] }) => {
   const completedCount = spots.filter(s => s.status === '已打卡').length;
   const totalSpots = spots.length;
+  const matchUnlocked = completedCount >= 2;
   
   return (
-  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-24 flex flex-col min-h-full bg-mutton-white">
-    {/* 一、顶部固定路线总览条 */}
-    <div className="sticky top-0 z-30 bg-mutton-white/95 backdrop-blur-md border-b-[0.5px] border-silver-gray/20 p-6 shadow-sm">
-      <p className="text-[10px] text-silver-gray tracking-widest mb-2">陕西历史博物馆导览</p>
-      <div className="flex justify-between items-end mb-4">
-        <h2 className="font-serif text-xl tracking-[0.2em] text-cyan-blue">唐代主题路线 · 大唐遗宝展区</h2>
-        <div className="text-right">
-          <span className="text-[10px] text-silver-gray tracking-widest block mb-1">完成进度</span>
-          <span className="text-sm font-mono text-cyan-blue">{completedCount} / {totalSpots}</span>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-24 flex flex-col min-h-full bg-mutton-white">
+      {/* 一、顶部路线任务总控 */}
+      <div className="sticky top-0 z-30 bg-mutton-white/95 backdrop-blur-md border-b-[0.5px] border-silver-gray/20 p-6 shadow-sm">
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <p className="text-[10px] text-silver-gray tracking-[0.3em] uppercase font-mono mb-1">Mission Control / 路线总控</p>
+            <h2 className="font-serif text-2xl tracking-[0.1em] text-cyan-blue">唐代主题路线 · 大唐遗宝</h2>
+          </div>
+          <div className="text-right">
+            <p className="text-[10px] text-silver-gray tracking-widest uppercase font-mono mb-1">Progress</p>
+            <span className="text-xl font-mono text-cyan-blue">{completedCount}<span className="text-silver-gray/40 mx-1">/</span>{totalSpots}</span>
+          </div>
         </div>
-      </div>
-      <div className="flex items-center gap-2 bg-silver-gray/5 p-3 rounded-sm border-[0.5px] border-silver-gray/10">
-        <div className={`w-2 h-2 rounded-full ${completedCount >= 2 ? 'bg-low-gold shadow-[0_0_8px_rgba(184,161,114,0.6)]' : 'bg-silver-gray/30'}`}></div>
-        <span className="text-xs tracking-widest text-cyan-blue">
-          {completedCount >= 2 ? '已解锁合符条件' : '需完成 2 个点位解锁合符'}
-        </span>
-      </div>
-    </div>
 
-    {/* 二、中部点位区 */}
-    <div className="p-6 space-y-6 flex-1 relative pl-10">
-      {/* 路线连接线 */}
-      <div className="absolute left-[21px] top-12 bottom-12 w-[1px] bg-silver-gray/20 z-0"></div>
-
-      {spots.map((spot, index) => {
-        const isCompleted = spot.status === '已打卡';
-        const isActive = spot.status === '未打卡' && index === completedCount;
-        const isLocked = spot.status === '未打卡' && index > completedCount;
-
-        let cardStyle = '';
-        let statusText = '';
-        let typeText = index % 2 === 0 ? '文物打卡点' : '讲解屏解锁点';
-        let distanceText = '';
-
-        if (isCompleted) {
-          cardStyle = 'bg-cyan-blue/5 border-cyan-blue/10 opacity-60';
-          statusText = '已完成';
-          distanceText = '已打卡';
-        } else if (isActive) {
-          cardStyle = 'bg-mutton-white border-cyan-blue shadow-[0_4px_12px_rgba(28,43,45,0.08)] z-10';
-          statusText = '已到达未打卡';
-          distanceText = '距您约 5 米';
-        } else {
-          cardStyle = 'bg-mutton-white border-silver-gray/20 opacity-50';
-          statusText = '未到达';
-          distanceText = `预计步行 ${5 + (index - completedCount) * 3} 分钟`;
-        }
-
-        return (
-          <div key={spot.id} className="relative z-10">
-            {/* 路线节点 */}
-            <div className={`absolute -left-[33px] top-6 w-4 h-4 rounded-full border-2 border-mutton-white flex items-center justify-center ${isCompleted ? 'bg-cyan-blue' : isActive ? 'bg-stamp-red animate-pulse' : 'bg-silver-gray/30'}`}>
-              {isCompleted && <CheckCircle2 size={10} className="text-mutton-white" />}
-            </div>
-
-            <div className={`p-5 rounded-sm border-[1px] relative overflow-hidden transition-all duration-300 ${cardStyle}`}>
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h3 className={`font-serif text-base tracking-widest mb-1 ${isActive ? 'text-cyan-blue font-bold' : 'text-cyan-blue'}`}>{spot.name}</h3>
-                  <p className="text-[10px] text-silver-gray tracking-widest">{typeText} · {distanceText}</p>
-                </div>
-                <span className={`text-[10px] tracking-widest px-2 py-1 rounded-sm ${isCompleted ? 'bg-cyan-blue/10 text-cyan-blue' : isActive ? 'bg-stamp-red text-mutton-white' : 'bg-silver-gray/10 text-silver-gray'}`}>
-                  {statusText}
-                </span>
-              </div>
-              
-              {isActive && (
-                <button onClick={() => { onSelectSpot(spot); onOpenSubView('spot-details'); }} className="mt-4 w-full py-3 bg-cyan-blue text-mutton-white text-xs tracking-widest rounded-sm active:scale-[0.98] transition-transform flex justify-center items-center gap-2">
-                  <Scan size={14} />
-                  查看详情并打卡
-                </button>
-              )}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-silver-gray/5 p-3 rounded-sm border-[0.5px] border-silver-gray/10">
+            <p className="text-[9px] text-silver-gray tracking-widest uppercase mb-1">Current Segment / 当前路段</p>
+            <p className="text-xs text-cyan-blue tracking-widest truncate">何家村遗宝展厅 A区</p>
+          </div>
+          <div className={`p-3 rounded-sm border-[0.5px] transition-colors ${matchUnlocked ? 'bg-low-gold/10 border-low-gold/30' : 'bg-silver-gray/5 border-silver-gray/10'}`}>
+            <p className="text-[9px] text-silver-gray tracking-widest uppercase mb-1">Match Status / 合符条件</p>
+            <div className="flex items-center gap-2">
+              <div className={`w-1.5 h-1.5 rounded-full ${matchUnlocked ? 'bg-low-gold shadow-[0_0_8px_rgba(184,161,114,0.6)]' : 'bg-silver-gray/30'}`}></div>
+              <p className={`text-xs tracking-widest ${matchUnlocked ? 'text-low-gold font-medium' : 'text-silver-gray'}`}>
+                {matchUnlocked ? '已解锁合符' : `还差 ${2 - completedCount} 点位`}
+              </p>
             </div>
           </div>
-        );
-      })}
-    </div>
-
-    {/* 三、底部提示区 */}
-    <div className="px-6 pb-6">
-      <div className="bg-silver-gray/5 border-[0.5px] border-silver-gray/20 p-4 rounded-sm text-center">
-        <p className="text-[10px] text-silver-gray tracking-widest">完成指定点位后，可提升合符条件匹配度</p>
+        </div>
       </div>
-    </div>
-  </motion.div>
-)};
+
+      {/* 二、中部点位任务链 */}
+      <div className="p-8 space-y-10 flex-1 relative">
+        {/* 纵向路径线 */}
+        <div className="absolute left-[47px] top-12 bottom-12 w-[1px] bg-silver-gray/10 z-0"></div>
+
+        {spots.map((spot, index) => {
+          const isCompleted = spot.status === '已打卡';
+          const isActive = spot.status === '未打卡' && index === completedCount;
+          const isLocked = spot.status === '未打卡' && index > completedCount;
+
+          let cardStyle = '';
+          let statusLabel = '';
+          let statusColor = '';
+          let typeText = index % 2 === 0 ? '文物打卡点' : '讲解屏解锁点';
+          let timeText = `预计步行 ${5 + (index - completedCount) * 2} min`;
+
+          if (isCompleted) {
+            cardStyle = 'bg-cyan-blue/5 border-cyan-blue/10 opacity-60';
+            statusLabel = '已完成';
+            statusColor = 'text-cyan-blue bg-cyan-blue/10';
+            timeText = '已探索完毕';
+          } else if (isActive) {
+            cardStyle = 'bg-mutton-white border-cyan-blue shadow-[0_8px_24px_rgba(28,43,45,0.1)] z-10 scale-[1.02]';
+            statusLabel = '当前目标';
+            statusColor = 'text-mutton-white bg-stamp-red';
+          } else {
+            cardStyle = 'bg-mutton-white border-silver-gray/20 opacity-40';
+            statusLabel = '未开启';
+            statusColor = 'text-silver-gray bg-silver-gray/10';
+          }
+
+          return (
+            <div key={spot.id} className="relative pl-14">
+              {/* 路径节点 */}
+              <div className={`absolute left-0 top-6 w-10 h-10 rounded-full border-2 border-mutton-white flex items-center justify-center z-10 transition-all duration-500 ${
+                isCompleted ? 'bg-cyan-blue' : isActive ? 'bg-stamp-red scale-110 shadow-[0_0_15px_rgba(196,30,58,0.4)]' : 'bg-silver-gray/20'
+              }`}>
+                {isCompleted ? (
+                  <CheckCircle2 size={16} className="text-mutton-white" />
+                ) : (
+                  <span className={`font-mono text-xs ${isActive ? 'text-mutton-white' : 'text-silver-gray'}`}>{index + 1}</span>
+                )}
+              </div>
+
+              <div className={`p-6 rounded-sm border-[1px] relative overflow-hidden transition-all duration-500 ${cardStyle}`}>
+                {isActive && (
+                  <div className="absolute top-0 right-0 p-2">
+                    <div className="w-1.5 h-1.5 bg-stamp-red rounded-full animate-pulse"></div>
+                  </div>
+                )}
+                
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className={`font-serif text-lg tracking-widest mb-1 ${isActive ? 'text-cyan-blue font-bold' : 'text-cyan-blue'}`}>{spot.name}</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[9px] text-silver-gray tracking-widest uppercase font-mono">{typeText}</span>
+                      <span className="text-silver-gray/30 text-[9px]">|</span>
+                      <span className="text-[9px] text-silver-gray tracking-widest uppercase font-mono">{timeText}</span>
+                    </div>
+                  </div>
+                  <span className={`text-[9px] tracking-[0.2em] px-2 py-1 rounded-sm uppercase font-mono ${statusColor}`}>
+                    {statusLabel}
+                  </span>
+                </div>
+
+                {isActive && (
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => { onSelectSpot(spot); onOpenSubView('spot-details'); }} 
+                    className="mt-2 w-full py-3 bg-cyan-blue text-mutton-white text-[10px] tracking-[0.3em] rounded-sm flex justify-center items-center gap-2 uppercase font-mono shadow-md"
+                  >
+                    <Scan size={14} />
+                    Execute Mission / 执行打卡
+                  </motion.button>
+                )}
+                
+                {isCompleted && (
+                  <div className="mt-2 flex items-center gap-2 text-[10px] text-cyan-blue/60 tracking-widest italic">
+                    <Ticket size={12} />
+                    已解锁：{spot.relic}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 三、底部提示 */}
+      <div className="px-8 py-10 text-center">
+        <p className="text-[10px] text-silver-gray tracking-[0.3em] uppercase font-mono leading-loose">
+          Complete more points to unlock higher match eligibility.<br/>
+          完成更多点位以解锁更高合符资格。
+        </p>
+      </div>
+    </motion.div>
+  );
+};
 
 const CommemorationTab = ({ tag, hasMatched, onOpenSubView, spots }: { tag: string, hasMatched: boolean, onOpenSubView: (view: SubViewState) => void, spots: any[] }) => (
-  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 pb-24">
-    <header className="mb-6 pt-4">
-      <h2 className="font-serif text-2xl tracking-[0.2em] text-cyan-blue">数字纪念</h2>
-      <p className="text-silver-gray tracking-[0.2em] text-[10px] uppercase font-mono mt-1">Digital Souvenirs</p>
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 pb-24 bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')] min-h-full">
+    <header className="mb-8 pt-4 flex justify-between items-end">
+      <div>
+        <h2 className="font-serif text-2xl tracking-[0.3em] text-cyan-blue">长安契约</h2>
+        <p className="text-silver-gray tracking-[0.2em] text-[9px] uppercase font-mono mt-1 opacity-70">Digital Commemoration / 数字纪念</p>
+      </div>
+      <div className="text-right">
+        <p className="text-[9px] text-stamp-red font-mono tracking-widest uppercase">Verified / 已核验</p>
+        <p className="text-[8px] text-silver-gray font-mono tracking-widest mt-0.5">2026.04.03</p>
+      </div>
     </header>
 
-    {/* Certificate Frame Style */}
-    <div className="p-4 border-[0.5px] border-silver-gray/30 bg-mutton-white shadow-sm relative mb-8">
-      {/* Decorative Corners */}
-      <div className="absolute top-1 left-1 w-3 h-3 border-t-[0.5px] border-l-[0.5px] border-cyan-blue/50"></div>
-      <div className="absolute top-1 right-1 w-3 h-3 border-t-[0.5px] border-r-[0.5px] border-cyan-blue/50"></div>
-      <div className="absolute bottom-1 left-1 w-3 h-3 border-b-[0.5px] border-l-[0.5px] border-cyan-blue/50"></div>
-      <div className="absolute bottom-1 right-1 w-3 h-3 border-b-[0.5px] border-r-[0.5px] border-cyan-blue/50"></div>
+    {/* 核心票证区域 - Ticket Style */}
+    <div className="relative mb-12 group">
+      {/* 票证阴影与质感 */}
+      <div className="absolute inset-x-2 -bottom-2 h-full bg-black/5 blur-xl rounded-sm -z-10" />
+      
+      <div className="bg-mutton-white border-[0.5px] border-silver-gray/30 p-1 relative overflow-hidden shadow-sm">
+        {/* 锯齿边缘装饰 (模拟票根) */}
+        <div className="absolute left-0 top-0 bottom-0 w-1 flex flex-col justify-around py-2 z-10">
+          {[...Array(12)].map((_, i) => (
+            <div key={i} className="w-1 h-1 rounded-full bg-[var(--color-bg-base)] -ml-0.5 border-[0.5px] border-silver-gray/20" />
+          ))}
+        </div>
+        <div className="absolute right-0 top-0 bottom-0 w-1 flex flex-col justify-around py-2 z-10">
+          {[...Array(12)].map((_, i) => (
+            <div key={i} className="w-1 h-1 rounded-full bg-[var(--color-bg-base)] -mr-0.5 border-[0.5px] border-silver-gray/20" />
+          ))}
+        </div>
 
-      {hasMatched ? (
-        <div onClick={() => onOpenSubView('share-card')} className="cursor-pointer transition-transform hover:scale-[1.01] active:scale-[0.99]">
-          <TicketCard tag={tag} hasMatched={hasMatched} spots={spots} />
-          <p className="text-center text-[10px] text-silver-gray tracking-widest mt-4 flex items-center justify-center gap-1">
-            <Scan size={10} /> 点击查看并分享专属契约
-          </p>
+        <div className="border-[0.5px] border-cyan-blue/20 p-6 relative">
+          {/* 四角装饰 */}
+          <div className="absolute top-2 left-2 w-4 h-4 border-t-[1px] border-l-[1px] border-low-gold/40" />
+          <div className="absolute top-2 right-2 w-4 h-4 border-t-[1px] border-r-[1px] border-low-gold/40" />
+          <div className="absolute bottom-2 left-2 w-4 h-4 border-b-[1px] border-l-[1px] border-low-gold/40" />
+          <div className="absolute bottom-2 right-2 w-4 h-4 border-b-[1px] border-r-[1px] border-low-gold/40" />
+
+          {hasMatched ? (
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => onOpenSubView('share-card')} 
+              className="cursor-pointer"
+            >
+              <TicketCard tag={tag} hasMatched={hasMatched} spots={spots} />
+              <div className="mt-8 pt-6 border-t-[0.5px] border-dashed border-silver-gray/20 flex flex-col items-center gap-3">
+                <div className="flex items-center gap-4">
+                  <div className="w-8 h-[1px] bg-silver-gray/20" />
+                  <span className="font-serif text-[10px] text-silver-gray tracking-[0.4em] uppercase">Scan to Share</span>
+                  <div className="w-8 h-[1px] bg-silver-gray/20" />
+                </div>
+                <div className="flex items-center gap-2 text-cyan-blue/60">
+                  <Scan size={14} />
+                  <span className="text-[10px] tracking-[0.2em] font-mono">TAP TO VIEW FULL CONTRACT</span>
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="py-24 flex flex-col items-center justify-center text-silver-gray/40 border-[0.5px] border-dashed border-silver-gray/20 m-2 bg-silver-gray/5">
+              <div className="relative mb-6">
+                <Ticket size={48} strokeWidth={1} />
+                <motion.div 
+                  animate={{ opacity: [0.2, 0.5, 0.2] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute inset-0 bg-cyan-blue/5 blur-xl rounded-full"
+                />
+              </div>
+              <p className="text-xs tracking-[0.3em] font-serif mb-2">契约待解锁</p>
+              <p className="text-[9px] tracking-widest font-mono uppercase">Awaiting Match Confirmation</p>
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="py-16 flex flex-col items-center justify-center text-silver-gray border-[0.5px] border-dashed border-silver-gray/30 m-2">
-          <Ticket size={32} className="mb-4 opacity-50" />
-          <p className="text-sm tracking-widest font-serif">完成合符后解锁契约卡</p>
-        </div>
-      )}
+      </div>
     </div>
 
-    {/* 3.2 徽章与收集内容 - Stamp Style */}
-    <div className="mb-8">
-      <h3 className="font-serif text-sm text-cyan-blue tracking-widest mb-4 flex items-center gap-2">
-        <span className="w-1 h-1 bg-low-gold rounded-full"></span>
-        已获印记
-      </h3>
-      <div className="grid grid-cols-3 gap-4">
+    {/* 收集成就 - Artifact Stamp Style */}
+    <div className="mb-12">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="font-serif text-sm text-cyan-blue tracking-[0.2em] flex items-center gap-3">
+          <span className="w-1.5 h-1.5 bg-stamp-red rounded-full shadow-[0_0_8px_rgba(182,53,46,0.4)]"></span>
+          已获印记
+        </h3>
+        <span className="text-[9px] text-silver-gray font-mono tracking-widest uppercase">
+          {spots.filter(s => s.status === '已打卡').length} / {spots.length} Collected
+        </span>
+      </div>
+      
+      <div className="grid grid-cols-3 gap-6">
         {spots.map((spot, i) => {
           const isCompleted = spot.status === '已打卡';
           return (
-          <div key={i} className="aspect-square border-[0.5px] border-silver-gray/30 flex flex-col items-center justify-center gap-2 bg-mutton-white relative overflow-hidden group">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1615800098779-1be32e60cca3?q=80&w=200&auto=format&fit=crop')] bg-cover opacity-5 mix-blend-multiply group-hover:opacity-10 transition-opacity"></div>
-            <div className={`w-10 h-10 rounded-full border-[1px] flex items-center justify-center ${isCompleted ? 'border-stamp-red/40 text-stamp-red' : 'border-silver-gray/30 text-silver-gray opacity-30'}`}>
-              <span className="font-serif text-xs" style={{ writingMode: 'vertical-rl' }}>{isCompleted ? spot.relic : '未获'}</span>
-            </div>
-          </div>
-        )})}
+            <motion.div 
+              key={i} 
+              whileHover={isCompleted ? { y: -4 } : {}}
+              className={`aspect-square border-[0.5px] flex flex-col items-center justify-center gap-2 relative overflow-hidden transition-all duration-500
+                ${isCompleted ? 'bg-mutton-white border-low-gold/30 shadow-md' : 'bg-silver-gray/5 border-silver-gray/10 opacity-40'}`}
+            >
+              {/* 印章背景纹理 */}
+              {isCompleted && (
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')] opacity-20 mix-blend-multiply" />
+              )}
+              
+              <div className={`w-12 h-12 rounded-full border-[1.5px] flex items-center justify-center relative
+                ${isCompleted ? 'border-stamp-red/60 text-stamp-red shadow-inner' : 'border-silver-gray/20 text-silver-gray'}`}>
+                {isCompleted && (
+                  <motion.div 
+                    initial={{ scale: 1.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="absolute inset-0 border-[4px] border-stamp-red/5 rounded-full"
+                  />
+                )}
+                <span className="font-serif text-xs font-bold leading-tight text-center px-1" style={{ writingMode: 'vertical-rl' }}>
+                  {isCompleted ? spot.relic : '未获'}
+                </span>
+              </div>
+              <span className="text-[8px] tracking-widest text-silver-gray uppercase font-mono mt-1">
+                {isCompleted ? 'Acquired' : 'Locked'}
+              </span>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
 
-    {/* 3.6 历史票证列表 */}
-    <button 
+    {/* 历史回顾入口 */}
+    <motion.button 
+      whileHover={{ x: 4 }}
       onClick={() => onOpenSubView('historical-tickets')}
-      className="w-full py-4 border-[0.5px] border-silver-gray/30 text-cyan-blue text-sm tracking-widest flex justify-between items-center px-4 bg-mutton-white hover:bg-mutton-white/80 transition-colors"
+      className="w-full py-5 border-[0.5px] border-silver-gray/20 text-cyan-blue text-[10px] tracking-[0.3em] flex justify-between items-center px-6 bg-mutton-white shadow-sm hover:shadow-md transition-all uppercase font-mono"
     >
-      <span className="font-serif">回看历史票证</span>
-      <ChevronRight size={16} className="text-silver-gray" />
-    </button>
+      <div className="flex items-center gap-3">
+        <div className="w-1 h-4 bg-cyan-blue/20" />
+        <span>Historical Archives / 回看历史票证</span>
+      </div>
+      <ChevronRight size={14} className="text-silver-gray/60" />
+    </motion.button>
   </motion.div>
 );
 
@@ -394,126 +583,152 @@ const ProfileTab = ({ tag, nickname, bio, onOpenSubView, sensingEnabled, setSens
   const [notificationMode, setNotificationMode] = useState<'vibrate' | 'silent'>('vibrate');
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 pb-24">
-      <header className="mb-6 pt-4">
-        <h2 className="font-serif text-2xl tracking-[0.2em] text-cyan-blue">身份与设备</h2>
-        <p className="text-silver-gray tracking-[0.2em] text-[10px] uppercase font-mono mt-1">Identity & Device</p>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 pb-24 bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')] min-h-full">
+      <header className="mb-8 pt-4">
+        <h2 className="font-serif text-2xl tracking-[0.3em] text-cyan-blue">身份与设备</h2>
+        <p className="text-silver-gray tracking-[0.2em] text-[9px] uppercase font-mono mt-1 opacity-70">Identity & Device Management</p>
       </header>
 
-      <div className="space-y-8">
-        {/* 一、身份信息区 */}
+      <div className="space-y-10">
+        {/* 一、身份信息区 - Identity Card */}
         <section>
-          <h3 className="font-serif text-sm text-cyan-blue tracking-widest mb-3 flex items-center gap-2">
-            <span className="w-1 h-1 bg-low-gold rounded-full"></span>
-            身份信息
-          </h3>
-          <div onClick={() => onOpenSubView('edit-profile')} className="p-5 rounded-sm border-[0.5px] border-silver-gray/20 bg-mutton-white shadow-sm flex items-center gap-4 relative cursor-pointer hover:border-cyan-blue/30 transition-colors">
-            <div className="w-14 h-14 rounded-full bg-cyan-blue/5 border-[1px] border-cyan-blue/20 flex items-center justify-center shrink-0">
-              <User className="text-cyan-blue" size={24} strokeWidth={1.5} />
+          <div className="flex justify-between items-center mb-4 px-1">
+            <h3 className="font-serif text-sm text-cyan-blue tracking-[0.2em] flex items-center gap-3">
+              <span className="w-1.5 h-1.5 bg-low-gold rounded-full shadow-[0_0_8px_rgba(184,161,114,0.4)]"></span>
+              身份信息
+            </h3>
+            <span className="text-[9px] text-silver-gray font-mono tracking-widest uppercase">Profile</span>
+          </div>
+          
+          <motion.div 
+            whileHover={{ y: -2 }}
+            onClick={() => onOpenSubView('edit-profile')} 
+            className="p-6 rounded-sm border-[0.5px] border-silver-gray/20 bg-mutton-white shadow-sm flex items-center gap-5 relative cursor-pointer hover:border-cyan-blue/30 transition-all"
+          >
+            <div className="relative">
+              <div className="w-16 h-16 rounded-full bg-cyan-blue/5 border-[1px] border-cyan-blue/10 flex items-center justify-center shrink-0 overflow-hidden">
+                <User className="text-cyan-blue/60" size={32} strokeWidth={1} />
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-stamp-red rounded-full border-2 border-mutton-white flex items-center justify-center">
+                <div className="w-1.5 h-1.5 bg-mutton-white rounded-full animate-pulse" />
+              </div>
             </div>
+            
             <div className="flex-1">
-              <div className="flex justify-between items-start mb-1">
-                <h4 className="font-serif text-lg tracking-[0.1em] text-cyan-blue">{nickname}</h4>
-                <span className="text-[10px] tracking-widest text-low-gold bg-low-gold/10 px-2 py-0.5 rounded-sm border-[0.5px] border-low-gold/30">{tag || '未设置标签'}</span>
+              <div className="flex justify-between items-start mb-2">
+                <h4 className="font-serif text-xl tracking-[0.1em] text-cyan-blue">{nickname}</h4>
+                <span className="text-[9px] tracking-[0.2em] text-low-gold bg-low-gold/5 px-2 py-1 rounded-sm border-[0.5px] border-low-gold/20 uppercase font-mono">{tag || 'No Tag'}</span>
               </div>
-              <p className="text-[10px] text-silver-gray tracking-widest font-mono">NO. CA-8492</p>
+              <div className="flex items-center gap-3">
+                <p className="text-[9px] text-silver-gray tracking-[0.2em] font-mono uppercase">ID: CA-8492-2026</p>
+                <div className="w-[1px] h-2 bg-silver-gray/20" />
+                <p className="text-[9px] text-silver-gray tracking-[0.2em] font-mono uppercase">Level: 初级馆友</p>
+              </div>
             </div>
-            <ChevronRight className="text-silver-gray/40" size={16} />
+            <ChevronRight className="text-silver-gray/30" size={18} />
+          </motion.div>
+        </section>
+
+        {/* 二、票证与鱼符 - Device Status */}
+        <section>
+          <div className="flex justify-between items-center mb-4 px-1">
+            <h3 className="font-serif text-sm text-cyan-blue tracking-[0.2em] flex items-center gap-3">
+              <span className="w-1.5 h-1.5 bg-cyan-blue rounded-full shadow-[0_0_8px_rgba(10,50,80,0.4)]"></span>
+              票证与设备
+            </h3>
+            <span className="text-[9px] text-silver-gray font-mono tracking-widest uppercase">Device</span>
+          </div>
+          
+          <div className="rounded-sm border-[0.5px] border-silver-gray/20 bg-mutton-white shadow-sm overflow-hidden divide-y-[0.5px] divide-silver-gray/10">
+            <div className="p-5 flex justify-between items-center">
+              <div className="space-y-1">
+                <span className="text-[10px] tracking-[0.2em] text-silver-gray uppercase font-mono">Talisman Status / 鱼符状态</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
+                  <span className="text-xs tracking-widest text-cyan-blue font-serif">已激活 (Active)</span>
+                </div>
+              </div>
+              <div className="text-right">
+                <span className="text-[9px] text-silver-gray font-mono tracking-widest block mb-1 uppercase">Battery</span>
+                <span className="text-[10px] text-cyan-blue font-mono font-bold tracking-widest">85%</span>
+              </div>
+            </div>
+            
+            <div className="p-5 flex justify-between items-center">
+              <div className="space-y-1">
+                <span className="text-[10px] tracking-[0.2em] text-silver-gray uppercase font-mono">Current Mission / 当前任务</span>
+                <span className="text-xs tracking-widest text-cyan-blue font-serif block">陕西历史博物馆导览</span>
+              </div>
+              <div className="text-right">
+                <span className="text-[9px] text-silver-gray font-mono tracking-widest block mb-1 uppercase">Progress</span>
+                <span className="text-[10px] text-cyan-blue font-mono font-bold tracking-widest">3/12</span>
+              </div>
+            </div>
+
+            <motion.button 
+              whileHover={{ backgroundColor: 'rgba(0,0,0,0.02)' }}
+              onClick={() => onOpenSubView('historical-tickets')} 
+              className="w-full p-5 flex justify-between items-center transition-colors text-left"
+            >
+              <span className="text-[10px] tracking-[0.2em] text-cyan-blue uppercase font-mono font-bold">Historical Archives / 历史档案</span>
+              <ChevronRight className="text-silver-gray/30" size={16} />
+            </motion.button>
           </div>
         </section>
 
-        {/* 二、票证信息区 */}
+        {/* 三、感应设置 - Sensing Config */}
         <section>
-          <h3 className="font-serif text-sm text-cyan-blue tracking-widest mb-3 flex items-center gap-2">
-            <span className="w-1 h-1 bg-low-gold rounded-full"></span>
-            票证信息
-          </h3>
-          <div className="rounded-sm border-[0.5px] border-silver-gray/20 bg-mutton-white shadow-sm overflow-hidden">
-            <div className="p-4 border-b-[0.5px] border-silver-gray/10 flex justify-between items-center">
-              <span className="text-xs tracking-widest text-silver-gray">当前鱼符状态</span>
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                <span className="text-xs tracking-widest text-cyan-blue">已激活</span>
-              </div>
-            </div>
-            <div className="p-4 border-b-[0.5px] border-silver-gray/10 flex justify-between items-center">
-              <span className="text-xs tracking-widest text-silver-gray">当前活动</span>
-              <span className="text-xs tracking-widest text-cyan-blue">陕西历史博物馆导览</span>
-            </div>
-            <div className="p-4 border-b-[0.5px] border-silver-gray/10 flex justify-between items-center">
-              <span className="text-xs tracking-widest text-silver-gray">历史票证</span>
-              <span className="text-xs tracking-widest text-cyan-blue font-mono">2 张</span>
-            </div>
-            <button onClick={() => onOpenSubView('historical-tickets')} className="w-full p-4 flex justify-between items-center hover:bg-silver-gray/5 transition-colors text-left">
-              <span className="text-xs tracking-widest text-cyan-blue">活动记录入口</span>
-              <ChevronRight className="text-silver-gray/40" size={16} />
-            </button>
-          </div>
-        </section>
-
-        {/* 三、感应设置区 */}
-        <section>
-          <div className="flex justify-between items-end mb-3">
-            <h3 className="font-serif text-sm text-cyan-blue tracking-widest flex items-center gap-2">
-              <span className="w-1 h-1 bg-low-gold rounded-full"></span>
+          <div className="flex justify-between items-center mb-4 px-1">
+            <h3 className="font-serif text-sm text-cyan-blue tracking-[0.2em] flex items-center gap-3">
+              <span className="w-1.5 h-1.5 bg-stamp-red rounded-full shadow-[0_0_8px_rgba(182,53,46,0.4)]"></span>
               感应设置
             </h3>
-            <button onClick={() => onOpenSubView('sensing-settings')} className="text-[10px] text-cyan-blue tracking-widest flex items-center gap-1">
-              <Settings size={12} /> 高级设置
+            <button onClick={() => onOpenSubView('sensing-settings')} className="text-[9px] text-cyan-blue tracking-[0.2em] flex items-center gap-1 uppercase font-mono font-bold">
+              Config <ChevronRight size={10} />
             </button>
           </div>
           
-          <div className="rounded-sm border-[0.5px] border-silver-gray/20 bg-mutton-white shadow-sm overflow-hidden">
-            <div className="p-4 border-b-[0.5px] border-silver-gray/10 flex justify-between items-center">
-              <div>
-                <span className="text-xs tracking-widest text-cyan-blue block mb-1">同好感应</span>
-                <span className="text-[9px] tracking-widest text-silver-gray">允许发现附近路线相近的同好</span>
+          <div className="bg-mutton-white border-[0.5px] border-silver-gray/20 rounded-sm shadow-sm p-2">
+            <div className="flex items-center justify-between p-4 border-b-[0.5px] border-silver-gray/10">
+              <div className="flex items-center gap-4">
+                <div className={`p-2 rounded-full ${sensingEnabled ? 'bg-cyan-blue/10 text-cyan-blue' : 'bg-silver-gray/10 text-silver-gray'}`}>
+                  <Radio size={18} />
+                </div>
+                <div>
+                  <p className="text-xs tracking-widest text-cyan-blue font-serif">同好感应 (BLE Sensing)</p>
+                  <p className="text-[9px] text-silver-gray tracking-widest font-mono uppercase mt-0.5">Discover nearby peers</p>
+                </div>
               </div>
               <button 
                 onClick={() => setSensingEnabled(!sensingEnabled)}
-                className={`w-10 h-5 rounded-full transition-colors relative ${sensingEnabled ? 'bg-cyan-blue' : 'bg-silver-gray/30'}`}
+                className={`w-12 h-6 rounded-full transition-all duration-500 relative ${sensingEnabled ? 'bg-cyan-blue shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]' : 'bg-silver-gray/20'}`}
               >
-                <div className={`w-4 h-4 bg-mutton-white rounded-full absolute top-0.5 transition-transform ${sensingEnabled ? 'translate-x-5' : 'translate-x-0.5'}`}></div>
-              </button>
-            </div>
-            
-            <div className="p-4 border-b-[0.5px] border-silver-gray/10 flex justify-between items-center">
-              <div>
-                <span className="text-xs tracking-widest text-cyan-blue block mb-1">可被发现</span>
-                <span className="text-[9px] tracking-widest text-silver-gray">允许其他用户感应到你</span>
-              </div>
-              <button 
-                onClick={() => setIsDiscoverable(!isDiscoverable)}
-                className={`w-10 h-5 rounded-full transition-colors relative ${isDiscoverable ? 'bg-cyan-blue' : 'bg-silver-gray/30'}`}
-              >
-                <div className={`w-4 h-4 bg-mutton-white rounded-full absolute top-0.5 transition-transform ${isDiscoverable ? 'translate-x-5' : 'translate-x-0.5'}`}></div>
+                <motion.div 
+                  animate={{ x: sensingEnabled ? 26 : 2 }}
+                  className="absolute top-1 left-0 w-4 h-4 bg-mutton-white rounded-full shadow-md"
+                />
               </button>
             </div>
 
-            <div className="p-4 border-b-[0.5px] border-silver-gray/10 flex justify-between items-center">
-              <span className="text-xs tracking-widest text-cyan-blue">提示方式</span>
-              <div className="flex bg-silver-gray/10 rounded-sm p-0.5">
-                <button 
-                  onClick={() => setNotificationMode('vibrate')}
-                  className={`px-3 py-1 text-[10px] tracking-widest rounded-sm transition-colors ${notificationMode === 'vibrate' ? 'bg-mutton-white text-cyan-blue shadow-sm' : 'text-silver-gray'}`}
-                >
-                  震动
-                </button>
-                <button 
-                  onClick={() => setNotificationMode('silent')}
-                  className={`px-3 py-1 text-[10px] tracking-widest rounded-sm transition-colors ${notificationMode === 'silent' ? 'bg-mutton-white text-cyan-blue shadow-sm' : 'text-silver-gray'}`}
-                >
-                  静默
-                </button>
+            <div className="flex items-center justify-between p-4">
+              <div className="flex items-center gap-4 opacity-50">
+                <div className="p-2 rounded-full bg-silver-gray/10 text-silver-gray">
+                  <Scan size={18} />
+                </div>
+                <div>
+                  <p className="text-xs tracking-widest text-cyan-blue font-serif">极近场确认 (NFC Match)</p>
+                  <p className="text-[9px] text-silver-gray tracking-widest font-mono uppercase mt-0.5">Always active for safety</p>
+                </div>
               </div>
-            </div>
-
-            <div className="p-4 flex justify-between items-center">
-              <span className="text-xs tracking-widest text-cyan-blue">生效范围</span>
-              <span className="text-[10px] tracking-widest text-silver-gray bg-silver-gray/5 px-2 py-1 rounded-sm">仅本次活动</span>
+              <span className="text-[8px] text-silver-gray font-mono tracking-widest uppercase bg-silver-gray/10 px-2 py-1 rounded-sm">System Default</span>
             </div>
           </div>
         </section>
+      </div>
+
+      <div className="mt-16 pt-8 border-t-[0.5px] border-silver-gray/10 text-center">
+        <p className="text-[8px] text-silver-gray tracking-[0.4em] uppercase font-mono">Changan Contract v1.2.0-PRO</p>
+        <p className="text-[8px] text-silver-gray tracking-[0.2em] font-serif mt-2 opacity-50">陕西历史博物馆 · 联合呈现</p>
       </div>
     </motion.div>
   );
@@ -550,122 +765,136 @@ const ActivationFlow = ({ onClose, onComplete }: { onClose: () => void, onComple
 
   useEffect(() => {
     if (step === 2) {
-      const timer = setTimeout(() => setStep(3), 1500);
+      const timer = setTimeout(() => setStep(3), 2000);
       return () => clearTimeout(timer);
     }
   }, [step]);
 
   return (
-    <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="fixed inset-0 bg-[var(--color-bg-base)] z-50 flex flex-col">
-      <div className="p-6 flex justify-between items-center">
-        <span className="font-mono text-xs text-silver-gray tracking-widest uppercase">Activation</span>
-        <button onClick={onClose}><X size={24} className="text-silver-gray" /></button>
-      </div>
-      
-      {step === 1 && (
-        <div className="flex-1 flex flex-col p-6">
-          <div className="text-center mb-8 mt-4">
-            <h2 className="font-serif text-3xl text-cyan-blue mb-3 tracking-[0.2em]">激活鱼符</h2>
-            <p className="text-silver-gray text-xs tracking-[0.2em] uppercase font-mono">完成实体票证与数字身份绑定</p>
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }} 
+      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-4"
+    >
+      <motion.div 
+        initial={{ y: '100%', opacity: 0 }} 
+        animate={{ y: 0, opacity: 1 }} 
+        exit={{ y: '100%', opacity: 0 }} 
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }} 
+        className="w-full max-w-[420px] h-[90vh] bg-[var(--color-bg-base)] rounded-[28px] shadow-2xl overflow-hidden flex flex-col relative"
+      >
+        {/* 顶部区域 */}
+        <div className="p-6 pb-4 flex justify-between items-start shrink-0 relative z-10">
+          <div>
+            <span className="font-mono text-[10px] text-silver-gray tracking-[0.3em] uppercase mb-2 block">Activation</span>
+            <h2 className="font-serif text-2xl text-cyan-blue tracking-[0.2em] mb-1">激活鱼符</h2>
+            <p className="text-silver-gray text-[10px] tracking-widest">完成实体票证与数字身份绑定</p>
           </div>
-          
-          <div className="flex justify-center gap-4 mb-8">
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-cyan-blue text-mutton-white flex items-center justify-center text-xs font-mono">1</div>
-              <span className="text-[10px] text-cyan-blue tracking-widest">靠近鱼符</span>
+          <button onClick={onClose} className="p-2 -mr-2 hover:bg-silver-gray/5 rounded-full transition-colors">
+            <X size={24} className="text-silver-gray" />
+          </button>
+        </div>
+
+        <div className="flex-1 flex flex-col p-6 pt-0 overflow-y-auto">
+          {/* 步骤进度区 */}
+          <div className="flex justify-center items-center gap-3 mb-10 mt-4">
+            <div className={`flex flex-col items-center gap-2 ${step >= 1 ? 'opacity-100' : 'opacity-30'}`}>
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-mono transition-colors ${step >= 1 ? 'bg-low-gold text-mutton-white shadow-sm' : 'bg-silver-gray/20 text-silver-gray'}`}>1</div>
+              <span className={`text-[9px] tracking-widest ${step >= 1 ? 'text-cyan-blue font-medium' : 'text-silver-gray'}`}>靠近鱼符</span>
             </div>
-            <div className="w-8 h-[1px] bg-silver-gray/30 mt-4"></div>
-            <div className="flex flex-col items-center gap-2 opacity-30">
-              <div className="w-8 h-8 rounded-full bg-silver-gray text-mutton-white flex items-center justify-center text-xs font-mono">2</div>
-              <span className="text-[10px] text-silver-gray tracking-widest">读取身份</span>
+            <div className={`w-8 h-[1px] mb-4 transition-colors ${step >= 2 ? 'bg-low-gold/50' : 'bg-silver-gray/20'}`}></div>
+            <div className={`flex flex-col items-center gap-2 ${step >= 2 ? 'opacity-100' : 'opacity-30'}`}>
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-mono transition-colors ${step >= 2 ? 'bg-low-gold text-mutton-white shadow-sm' : 'bg-silver-gray/20 text-silver-gray'}`}>2</div>
+              <span className={`text-[9px] tracking-widest ${step >= 2 ? 'text-cyan-blue font-medium' : 'text-silver-gray'}`}>读取身份</span>
             </div>
-            <div className="w-8 h-[1px] bg-silver-gray/30 mt-4"></div>
-            <div className="flex flex-col items-center gap-2 opacity-30">
-              <div className="w-8 h-8 rounded-full bg-silver-gray text-mutton-white flex items-center justify-center text-xs font-mono">3</div>
-              <span className="text-[10px] text-silver-gray tracking-widest">完成激活</span>
+            <div className={`w-8 h-[1px] mb-4 transition-colors ${step >= 3 ? 'bg-low-gold/50' : 'bg-silver-gray/20'}`}></div>
+            <div className={`flex flex-col items-center gap-2 ${step >= 3 ? 'opacity-100' : 'opacity-30'}`}>
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-mono transition-colors ${step >= 3 ? 'bg-low-gold text-mutton-white shadow-sm' : 'bg-silver-gray/20 text-silver-gray'}`}>3</div>
+              <span className={`text-[9px] tracking-widest ${step >= 3 ? 'text-cyan-blue font-medium' : 'text-silver-gray'}`}>完成激活</span>
             </div>
           </div>
 
+          {/* 中部核心识别区 */}
           <div className="flex-1 flex flex-col items-center justify-center relative min-h-[200px] mb-8">
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-24 h-24 rounded-full border-[1px] border-cyan-blue/40 animate-ping" style={{ animationDuration: '3s' }}></div>
-              <div className="w-32 h-32 rounded-full border-[1px] border-cyan-blue/20 absolute"></div>
-              <div className="w-40 h-40 rounded-full border-[1px] border-cyan-blue/10 absolute"></div>
+              {/* 环形感应图形 */}
+              <motion.div 
+                animate={{ scale: step === 2 ? [1, 1.1, 1] : 1, opacity: step === 2 ? [0.3, 0.6, 0.3] : 0.3 }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="w-48 h-48 rounded-full border-[0.5px] border-low-gold/30 absolute"
+              />
+              <motion.div 
+                animate={{ scale: step === 2 ? [1, 1.2, 1] : 1, opacity: step === 2 ? [0.1, 0.3, 0.1] : 0.1 }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
+                className="w-64 h-64 rounded-full border-[0.5px] border-low-gold/20 absolute"
+              />
+              {step === 2 && (
+                <motion.div 
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1.5, opacity: 0 }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="w-32 h-32 rounded-full bg-low-gold/10 absolute"
+                />
+              )}
             </div>
-            <div className="w-24 h-24 bg-mutton-white rounded-full shadow-[0_0_30px_rgba(28,43,45,0.1)] flex items-center justify-center relative z-10 border-[0.5px] border-silver-gray/20">
-              <Scan className="w-10 h-10 text-cyan-blue" strokeWidth={1.5} />
-            </div>
-            <p className="mt-16 text-xs text-cyan-blue tracking-widest font-serif relative z-10">等待感应...</p>
-          </div>
-
-          <div className="mt-auto space-y-4 relative z-20">
-            <button onClick={() => setStep(2)} className="w-full py-4 bg-cyan-blue text-mutton-white tracking-[0.2em] text-sm rounded-sm shadow-md active:scale-[0.98] transition-transform">
-              开始识别
-            </button>
-            <button className="w-full py-4 text-silver-gray tracking-[0.2em] text-xs rounded-sm active:scale-[0.98] transition-transform">
-              无法识别？查看帮助
-            </button>
-          </div>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-          <div className="w-24 h-24 rounded-full border-[2px] border-cyan-blue border-t-transparent animate-spin mb-8"></div>
-          <h2 className="font-serif text-xl text-cyan-blue tracking-[0.2em] mb-2">正在读取身份</h2>
-          <p className="text-xs text-silver-gray tracking-widest font-mono">READING DATA...</p>
-        </div>
-      )}
-
-      {step === 3 && (
-        <div className="flex-1 flex flex-col p-6">
-          <div className="text-center mb-8 mt-4">
-            <h2 className="font-serif text-3xl text-cyan-blue mb-3 tracking-[0.2em]">激活鱼符</h2>
-            <p className="text-silver-gray text-xs tracking-[0.2em] uppercase font-mono">完成实体票证与数字身份绑定</p>
-          </div>
-          
-          <div className="flex justify-center gap-4 mb-8">
-            <div className="flex flex-col items-center gap-2 opacity-30">
-              <div className="w-8 h-8 rounded-full bg-silver-gray text-mutton-white flex items-center justify-center text-xs font-mono">1</div>
-              <span className="text-[10px] text-silver-gray tracking-widest">靠近鱼符</span>
-            </div>
-            <div className="w-8 h-[1px] bg-silver-gray/30 mt-4"></div>
-            <div className="flex flex-col items-center gap-2 opacity-30">
-              <div className="w-8 h-8 rounded-full bg-silver-gray text-mutton-white flex items-center justify-center text-xs font-mono">2</div>
-              <span className="text-[10px] text-silver-gray tracking-widest">读取身份</span>
-            </div>
-            <div className="w-8 h-[1px] bg-silver-gray/30 mt-4"></div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-cyan-blue text-mutton-white flex items-center justify-center text-xs font-mono">3</div>
-              <span className="text-[10px] text-cyan-blue tracking-widest">完成激活</span>
-            </div>
-          </div>
-
-          <div className="flex-1 flex flex-col items-center justify-center mb-8">
-            <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-6">
-              <CheckCircle2 className="w-10 h-10 text-green-500" />
-            </div>
-            <h3 className="font-serif text-2xl text-cyan-blue tracking-[0.2em] mb-8">激活成功</h3>
             
-            <div className="w-full p-6 border-[0.5px] border-silver-gray/20 bg-mutton-white rounded-sm shadow-sm space-y-4">
-              <div className="flex justify-between items-center border-b-[0.5px] border-silver-gray/10 pb-4">
-                <span className="text-xs text-silver-gray tracking-widest">票证编号</span>
-                <span className="text-sm text-cyan-blue font-mono tracking-wider">CA-8492</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-silver-gray tracking-widest">当前身份标签</span>
-                <span className="text-xs text-low-gold bg-low-gold/10 px-3 py-1 rounded-sm tracking-widest border-[0.5px] border-low-gold/30">汉服同袍</span>
-              </div>
+            <div className="w-28 h-28 bg-mutton-white rounded-full shadow-[0_8px_30px_rgba(184,161,114,0.15)] flex items-center justify-center relative z-10 border-[0.5px] border-low-gold/40">
+              {step === 3 ? (
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}>
+                  <CheckCircle2 className="w-12 h-12 text-low-gold" strokeWidth={1.5} />
+                </motion.div>
+              ) : (
+                <Scan className={`w-12 h-12 text-cyan-blue ${step === 2 ? 'animate-pulse' : ''}`} strokeWidth={1.5} />
+              )}
             </div>
+            
+            <p className="mt-8 text-sm text-cyan-blue tracking-[0.2em] font-serif relative z-10">
+              {step === 1 ? '准备激活票证' : step === 2 ? '正在识别...' : '激活成功'}
+            </p>
+            {step === 2 && (
+              <p className="text-[9px] text-silver-gray tracking-widest font-mono mt-2 uppercase">Reading NFC Data</p>
+            )}
+            {step === 3 && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 w-full p-4 border-[0.5px] border-silver-gray/20 bg-mutton-white rounded-sm shadow-sm space-y-3 relative z-10">
+                <div className="flex justify-between items-center border-b-[0.5px] border-silver-gray/10 pb-3">
+                  <span className="text-[10px] text-silver-gray tracking-widest uppercase">Talisman ID / 票证编号</span>
+                  <span className="text-sm text-cyan-blue font-mono tracking-wider">CA-8492</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] text-silver-gray tracking-widest uppercase">Identity Tag / 身份标签</span>
+                  <span className="text-[10px] text-low-gold bg-low-gold/10 px-3 py-1 rounded-sm tracking-widest border-[0.5px] border-low-gold/30">汉服同袍</span>
+                </div>
+              </motion.div>
+            )}
           </div>
 
-          <div className="mt-auto">
-            <button onClick={() => onComplete('汉服同袍')} className="w-full py-4 bg-cyan-blue text-mutton-white tracking-[0.2em] text-sm rounded-sm shadow-md active:scale-[0.98] transition-transform">
-              进入首页
-            </button>
+          {/* 底部操作区 */}
+          <div className="mt-auto space-y-3 relative z-20 shrink-0">
+            {step === 1 && (
+              <>
+                <button onClick={() => setStep(2)} className="w-full py-4 bg-cyan-blue text-mutton-white tracking-[0.3em] text-sm rounded-sm shadow-xl active:scale-[0.97] transition-all font-bold uppercase font-mono">
+                  开始识别
+                </button>
+                <button className="w-full py-2 text-silver-gray tracking-[0.2em] text-[10px] rounded-sm active:scale-[0.98] transition-transform">
+                  无法识别？查看帮助
+                </button>
+              </>
+            )}
+            {step === 2 && (
+              <div className="w-full py-4 bg-transparent border-[1px] border-silver-gray/20 text-silver-gray tracking-[0.3em] text-sm rounded-sm flex items-center justify-center gap-3 uppercase font-mono cursor-not-allowed">
+                <div className="w-4 h-4 border-2 border-silver-gray/30 border-t-silver-gray rounded-full animate-spin"></div>
+                <span>VERIFYING...</span>
+              </div>
+            )}
+            {step === 3 && (
+              <button onClick={() => onComplete('汉服同袍')} className="w-full py-4 bg-low-gold text-mutton-white tracking-[0.3em] text-sm rounded-sm shadow-xl active:scale-[0.97] transition-all font-bold uppercase font-mono">
+                Enter Changan / 进入首页
+              </button>
+            )}
           </div>
         </div>
-      )}
+      </motion.div>
     </motion.div>
   );
 };
@@ -675,83 +904,105 @@ const CheckInFlow = ({ onClose, spot }: { onClose: () => void, spot: any }) => {
   const [step, setStep] = useState(1);
 
   return (
-    <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="fixed inset-0 bg-[var(--color-bg-base)] z-50 flex flex-col">
-      <div className="p-6 flex justify-between items-center">
-        <span className="font-mono text-xs text-silver-gray tracking-widest">FLOW B: CHECK-IN</span>
-        <button onClick={onClose}><X size={24} className="text-silver-gray" /></button>
-      </div>
-      
-      {step === 1 && (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-          <MapPin className="w-24 h-24 text-cyan-blue mb-8 animate-bounce" strokeWidth={1} />
-          <h2 className="font-serif text-2xl text-cyan-blue mb-4 tracking-widest">到达点位：{spot?.name || '未知点位'}</h2>
-          <p className="text-silver-gray text-sm tracking-[0.2em] leading-loose mb-12">请使用手机 NFC 轻触感应区<br/>解锁文物信息</p>
-          <button onClick={() => setStep(2)} className="w-full py-4 bg-cyan-blue text-mutton-white tracking-[0.2em] text-sm rounded-sm shadow-md active:scale-[0.98] transition-transform">
-            [模拟] NFC 轻触
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }} 
+      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-4"
+    >
+      <motion.div 
+        initial={{ y: '100%', opacity: 0 }} 
+        animate={{ y: 0, opacity: 1 }} 
+        exit={{ y: '100%', opacity: 0 }} 
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }} 
+        className="w-full max-w-[420px] h-[90vh] bg-[var(--color-bg-base)] rounded-[28px] shadow-2xl overflow-hidden flex flex-col relative"
+      >
+        <div className="p-6 flex justify-between items-center shrink-0">
+          <span className="font-mono text-[10px] text-silver-gray tracking-widest uppercase">Check-in Flow</span>
+          <button onClick={onClose} className="p-2 -mr-2 hover:bg-silver-gray/5 rounded-full transition-colors">
+            <X size={24} className="text-silver-gray" />
           </button>
         </div>
-      )}
-
-      {step === 2 && (
-        <div className="flex-1 flex flex-col p-8">
-          <div className="text-center mb-12 mt-8">
-            <h2 className="font-serif text-3xl text-cyan-blue mb-4 tracking-[0.2em]">打卡成功</h2>
-            <p className="text-silver-gray text-xs tracking-[0.2em] uppercase font-mono">已完成当前点位记录</p>
-          </div>
-
-          <div className="flex-1 flex flex-col items-center justify-center">
-            <div className="w-full p-6 border-[0.5px] border-silver-gray/20 bg-mutton-white rounded-sm shadow-sm space-y-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-[url('https://images.unsplash.com/photo-1615800098779-1be32e60cca3?q=80&w=200&auto=format&fit=crop')] bg-cover opacity-10 mix-blend-multiply"></div>
-              
-              <div className="relative z-10">
-                <h3 className="font-serif text-xl text-cyan-blue tracking-widest mb-1">{spot?.name || '未知点位'}</h3>
-                <p className="text-[10px] text-silver-gray tracking-widest uppercase font-mono">{spot?.type === 'relic' ? '文物打卡点' : '讲解屏解锁点'}</p>
-              </div>
-
-              <div className="relative z-10 border-t-[0.5px] border-silver-gray/10 pt-4">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs text-silver-gray tracking-widest">当前进度更新</span>
-                  <span className="text-sm text-cyan-blue font-mono tracking-wider">1 / 5</span>
-                </div>
-                <div className="w-full h-1 bg-silver-gray/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-cyan-blue w-1/5"></div>
-                </div>
-              </div>
-
-              <div className="relative z-10 border-t-[0.5px] border-silver-gray/10 pt-4">
-                <span className="text-xs text-silver-gray tracking-widest block mb-3">新解锁内容</span>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full border-[1px] border-low-gold/50 bg-low-gold/5 flex items-center justify-center text-low-gold">
-                    <span className="font-serif text-xs" style={{ writingMode: 'vertical-rl' }}>{spot?.relic || '印记'}</span>
-                  </div>
-                  <div>
-                    <p className="text-sm text-cyan-blue tracking-widest mb-1">专属文物印记</p>
-                    <p className="text-[10px] text-silver-gray tracking-widest">已存入数字纪念页</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="absolute bottom-4 right-4 w-16 h-16 border-[1.5px] border-stamp-red text-stamp-red flex items-center justify-center transform -rotate-12 opacity-80 mix-blend-multiply rounded-sm">
-                <span className="font-serif text-sm leading-none tracking-[0.2em]" style={{ writingMode: 'vertical-rl' }}>已阅</span>
-              </div>
+        
+        {step === 1 && (
+          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center overflow-y-auto">
+            <div className="relative mb-8">
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="absolute inset-0 bg-cyan-blue/20 rounded-full blur-2xl"
+              />
+              <MapPin className="w-16 h-16 text-cyan-blue relative z-10 animate-bounce" strokeWidth={1.5} />
             </div>
-          </div>
-
-          <div className="mt-auto space-y-4">
-            <button onClick={onClose} className="w-full py-4 bg-cyan-blue text-mutton-white tracking-[0.2em] text-sm rounded-sm shadow-md active:scale-[0.98] transition-transform">
-              前往下一个点位
+            <h2 className="font-serif text-2xl text-cyan-blue mb-3 tracking-widest">到达点位：{spot?.name || '未知点位'}</h2>
+            <p className="text-silver-gray text-xs tracking-[0.2em] leading-loose mb-8">请使用手机 NFC 轻触感应区<br/>解锁文物信息</p>
+            <button onClick={() => setStep(2)} className="w-full py-4 bg-cyan-blue text-mutton-white tracking-[0.2em] text-sm rounded-sm shadow-md active:scale-[0.98] transition-transform font-bold">
+              [模拟] NFC 轻触
             </button>
-            <div className="flex gap-4">
-              <button onClick={onClose} className="flex-1 py-4 border-[1px] border-silver-gray/20 text-cyan-blue tracking-[0.2em] text-xs rounded-sm active:scale-[0.98] transition-transform">
-                返回地图
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="flex-1 flex flex-col p-6 overflow-y-auto">
+            <div className="text-center mb-10 mt-4">
+              <h2 className="font-serif text-3xl text-cyan-blue mb-3 tracking-[0.2em]">打卡成功</h2>
+              <p className="text-silver-gray text-[10px] tracking-[0.2em] uppercase font-mono">已完成当前点位记录</p>
+            </div>
+
+            <div className="flex-1 flex flex-col items-center justify-center">
+              <div className="w-full p-6 border-[0.5px] border-silver-gray/20 bg-mutton-white rounded-sm shadow-sm space-y-6 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[url('https://images.unsplash.com/photo-1615800098779-1be32e60cca3?q=80&w=200&auto=format&fit=crop')] bg-cover opacity-10 mix-blend-multiply"></div>
+                
+                <div className="relative z-10">
+                  <h3 className="font-serif text-xl text-cyan-blue tracking-widest mb-1">{spot?.name || '未知点位'}</h3>
+                  <p className="text-[9px] text-silver-gray tracking-widest uppercase font-mono">{spot?.type === 'relic' ? '文物打卡点' : '讲解屏解锁点'}</p>
+                </div>
+
+                <div className="relative z-10 border-t-[0.5px] border-silver-gray/10 pt-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] text-silver-gray tracking-widest uppercase">Progress / 进度更新</span>
+                    <span className="text-sm text-cyan-blue font-mono tracking-wider">1 / 5</span>
+                  </div>
+                  <div className="w-full h-1 bg-silver-gray/10 rounded-full overflow-hidden">
+                    <div className="h-full bg-cyan-blue w-1/5"></div>
+                  </div>
+                </div>
+
+                <div className="relative z-10 border-t-[0.5px] border-silver-gray/10 pt-4">
+                  <span className="text-[10px] text-silver-gray tracking-widest block mb-3 uppercase">Unlocked / 新解锁内容</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full border-[1px] border-low-gold/50 bg-low-gold/5 flex items-center justify-center text-low-gold">
+                      <span className="font-serif text-xs" style={{ writingMode: 'vertical-rl' }}>{spot?.relic || '印记'}</span>
+                    </div>
+                    <div>
+                      <p className="text-xs text-cyan-blue tracking-widest mb-1">专属文物印记</p>
+                      <p className="text-[9px] text-silver-gray tracking-widest">已存入数字纪念页</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="absolute bottom-4 right-4 w-14 h-14 border-[1.5px] border-stamp-red text-stamp-red flex items-center justify-center transform -rotate-12 opacity-80 mix-blend-multiply rounded-sm">
+                  <span className="font-serif text-xs leading-none tracking-[0.2em]" style={{ writingMode: 'vertical-rl' }}>已阅</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-auto pt-6 pb-2 space-y-3">
+              <button onClick={onClose} className="w-full py-4 bg-cyan-blue text-mutton-white tracking-[0.2em] text-sm rounded-sm shadow-md active:scale-[0.98] transition-transform font-bold">
+                前往下一个点位
               </button>
-              <button onClick={onClose} className="flex-1 py-4 border-[1px] border-silver-gray/20 text-cyan-blue tracking-[0.2em] text-xs rounded-sm active:scale-[0.98] transition-transform">
-                查看纪念收集
-              </button>
+              <div className="flex gap-3">
+                <button onClick={onClose} className="flex-1 py-3 border-[0.5px] border-silver-gray/30 text-cyan-blue tracking-[0.2em] text-[10px] rounded-sm active:scale-[0.98] transition-transform bg-mutton-white uppercase font-mono">
+                  Back to Map
+                </button>
+                <button onClick={onClose} className="flex-1 py-3 border-[0.5px] border-silver-gray/30 text-cyan-blue tracking-[0.2em] text-[10px] rounded-sm active:scale-[0.98] transition-transform bg-mutton-white uppercase font-mono">
+                  View Collection
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </motion.div>
     </motion.div>
   )
 }
@@ -763,124 +1014,151 @@ const MatchFlow = ({ onClose, tag, onComplete }: { onClose: () => void, tag: str
 
   const handleVerify = () => {
     setIsVerifying(true);
-    setTimeout(() => setStep(2), 3000);
+    setTimeout(() => setStep(2), 3500);
   };
 
   return (
-    <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="fixed inset-0 bg-[var(--color-bg-base)] z-50 flex flex-col">
-      {/* 一、顶部标题区 */}
-      <div className="p-6 pt-12 flex justify-between items-center bg-mutton-white border-b-[1px] border-silver-gray/10 shrink-0 shadow-sm z-10">
-        <div>
-          <h2 className="font-serif text-2xl text-cyan-blue tracking-widest">合符确认</h2>
-          <p className="font-mono text-[10px] text-stamp-red tracking-widest mt-1 uppercase">已检测到双鱼拼合</p>
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }} 
+      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-4"
+    >
+      <motion.div 
+        initial={{ y: '100%', opacity: 0 }} 
+        animate={{ y: 0, opacity: 1 }} 
+        exit={{ y: '100%', opacity: 0 }} 
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }} 
+        className="w-full max-w-[420px] h-[90vh] bg-[var(--color-bg-base)] rounded-[28px] shadow-2xl overflow-hidden flex flex-col relative"
+      >
+        {/* 一、顶部标题 */}
+        <div className="p-6 pt-8 flex justify-between items-start shrink-0">
+          <div>
+            <h2 className="font-serif text-2xl tracking-[0.2em] text-cyan-blue mb-1">鱼符对合确认</h2>
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-stamp-red animate-pulse"></div>
+              <p className="text-[9px] text-stamp-red tracking-widest uppercase font-mono">Proximity Sensing Successful</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 -mr-2 hover:bg-silver-gray/5 rounded-full transition-colors">
+            <X size={24} className="text-silver-gray" />
+          </button>
         </div>
-        <button onClick={onClose} className="p-2 -mr-2"><X size={24} className="text-silver-gray" /></button>
-      </div>
       
-      {step === 1 && (
-        <div className="flex-1 flex flex-col items-center justify-between p-8 overflow-y-auto">
-          {/* 二、核心视觉区 */}
-          <div className="relative w-full max-w-[300px] aspect-square mt-4 flex items-center justify-center shrink-0">
-            {/* 契约感背景 */}
-            <div className="absolute inset-0 border-[1px] border-low-gold/30 rounded-sm rotate-45 scale-75"></div>
-            <div className="absolute inset-0 border-[1px] border-cyan-blue/10 rounded-full"></div>
-            <div className="absolute inset-4 border-[1px] border-low-gold/20 rounded-full border-dashed"></div>
-            
-            {/* 印章感装饰 */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-mutton-white px-2">
-              <span className="font-serif text-xs text-stamp-red tracking-widest">契</span>
-            </div>
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 bg-mutton-white px-2">
-              <span className="font-serif text-xs text-stamp-red tracking-widest">合</span>
-            </div>
-
-            <motion.div
-              animate={isVerifying ? { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 } : { x: [-20, -22, -20], y: [10, 12, 10], rotate: [-10, -12, -10], scale: 0.95, opacity: 0.9 }}
-              transition={isVerifying ? { type: "spring", stiffness: 400, damping: 12, mass: 0.8 } : { duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute inset-0 origin-center"
-            >
-              <TwinFishLeft className="w-full h-full text-cyan-blue drop-shadow-md" />
-            </motion.div>
-            
-            <motion.div
-              animate={isVerifying ? { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 } : { x: [20, 22, 20], y: [-10, -12, -10], rotate: [10, 12, 10], scale: 0.95, opacity: 0.9 }}
-              transition={isVerifying ? { type: "spring", stiffness: 400, damping: 12, mass: 0.8 } : { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              className="absolute inset-0 origin-center"
-            >
-              <TwinFishRight className="w-full h-full text-low-gold drop-shadow-md" />
-            </motion.div>
-
-            <AnimatePresence>
-              {isVerifying && (
+        {step === 1 && (
+          <div className="flex-1 flex flex-col items-center justify-between p-6 overflow-y-auto">
+            {/* 二、核心视觉区 (双鱼合符) */}
+            <div className="relative w-full max-w-[280px] aspect-square mt-2 flex items-center justify-center shrink-0">
+              {/* 仪式感背景 */}
+              <motion.div 
+                animate={{ rotate: 360 }}
+                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 border-[0.5px] border-low-gold/20 rounded-full border-dashed"
+              />
+              <div className="absolute inset-6 border-[0.5px] border-cyan-blue/10 rounded-full" />
+              
+              {/* 拼合动画 */}
+              <div className="relative w-40 h-40">
                 <motion.div
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 1.2, opacity: [0, 0.5, 0] }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="absolute inset-10 rounded-full bg-low-gold mix-blend-screen pointer-events-none blur-xl"
-                />
-              )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-              {isVerifying && (
+                  animate={isVerifying ? { x: 10, y: 0, rotate: 0, scale: 1.1 } : { x: -25, y: 8, rotate: -15 }}
+                  transition={{ type: "spring", stiffness: isVerifying ? 300 : 100, damping: 20 }}
+                  className="absolute inset-0 z-20"
+                >
+                  <TwinFishLeft className="w-full h-full text-cyan-blue drop-shadow-2xl" />
+                </motion.div>
+                
                 <motion.div
-                  initial={{ top: '10%', opacity: 0 }}
-                  animate={{ top: '90%', opacity: [0, 1, 1, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                  className="absolute left-[10%] right-[10%] h-[1px] bg-low-gold shadow-[0_0_10px_rgba(184,161,114,0.8)] z-10"
-                />
-              )}
-            </AnimatePresence>
-          </div>
+                  animate={isVerifying ? { x: -10, y: 0, rotate: 0, scale: 1.1 } : { x: 25, y: -8, rotate: 15 }}
+                  transition={{ type: "spring", stiffness: isVerifying ? 300 : 100, damping: 20 }}
+                  className="absolute inset-0 z-20"
+                >
+                  <TwinFishRight className="w-full h-full text-low-gold drop-shadow-2xl" />
+                </motion.div>
 
-          {/* 三、对象信息区 */}
-          <div className="w-full mt-10 mb-8 bg-mutton-white border-[1px] border-silver-gray/20 p-6 rounded-sm shadow-sm relative shrink-0">
-            <div className="absolute -top-3 left-6 bg-mutton-white px-2">
-              <span className="font-mono text-[10px] text-silver-gray tracking-widest uppercase">Target Info</span>
-            </div>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center border-b-[1px] border-silver-gray/10 pb-3">
-                <span className="text-xs text-silver-gray tracking-widest">匹配对象</span>
-                <span className="text-sm text-cyan-blue font-serif tracking-widest">{tag || '同游搭子'}</span>
+                {/* 拼合时的光效 */}
+                <AnimatePresence>
+                  {isVerifying && (
+                    <>
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: [0, 1, 0], scale: [0.5, 2, 2.5] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                        className="absolute inset-0 bg-low-gold/20 rounded-full blur-3xl z-10"
+                      />
+                      <motion.div
+                        initial={{ top: '0%', opacity: 0 }}
+                        animate={{ top: '100%', opacity: [0, 1, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        className="absolute left-0 right-0 h-[2px] bg-low-gold shadow-[0_0_15px_rgba(184,161,114,0.8)] z-30"
+                      />
+                    </>
+                  )}
+                </AnimatePresence>
               </div>
-              <div className="flex justify-between items-center border-b-[1px] border-silver-gray/10 pb-3">
-                <span className="text-xs text-silver-gray tracking-widest">所属活动</span>
-                <span className="text-sm text-cyan-blue font-serif tracking-widest">陕西历史博物馆导览</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-silver-gray tracking-widest">当前状态</span>
-                <span className="text-xs text-stamp-red tracking-widest flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-stamp-red animate-pulse"></span>
-                  等待双方确认
-                </span>
-              </div>
-            </div>
-          </div>
 
-          {/* 四、操作区 */}
-          <div className="w-full space-y-4 mt-auto shrink-0">
-            <button 
-              onClick={handleVerify}
-              disabled={isVerifying}
-              className={`w-full py-4 tracking-[0.2em] text-sm transition-all duration-500 flex items-center justify-center gap-4 rounded-sm shadow-md
-                ${isVerifying ? 'bg-transparent border-[1px] border-silver-gray/20 text-silver-gray cursor-not-allowed' : 'bg-cyan-blue text-mutton-white active:scale-[0.98]'}`}
-            >
-              {isVerifying ? (
-                <span className="font-mono text-xs">VERIFYING CONTRACT...</span>
-              ) : (
-                '确认合符'
-              )}
-            </button>
-            <button 
-              onClick={onClose}
-              disabled={isVerifying}
-              className="w-full py-4 border-[1px] border-silver-gray/20 text-silver-gray tracking-[0.2em] text-sm rounded-sm active:scale-[0.98] transition-transform bg-transparent"
-            >
-              返回稍后再说
-            </button>
+              {/* 装饰文字 */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-mutton-white px-2 py-0.5 border-[0.5px] border-stamp-red/30">
+                <span className="font-serif text-xs text-stamp-red tracking-[0.5em]">契</span>
+              </div>
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 bg-mutton-white px-2 py-0.5 border-[0.5px] border-stamp-red/30">
+                <span className="font-serif text-xs text-stamp-red tracking-[0.5em]">合</span>
+              </div>
+            </div>
+
+            {/* 三、对象信息区 */}
+            <div className="w-full mt-8 mb-6 bg-mutton-white border-[0.5px] border-silver-gray/20 p-6 rounded-sm shadow-sm relative shrink-0">
+              <div className="absolute -top-2.5 left-6 bg-mutton-white px-2">
+                <span className="font-mono text-[8px] text-silver-gray tracking-[0.3em] uppercase">Identity Verification</span>
+              </div>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center border-b-[0.5px] border-silver-gray/10 pb-3">
+                  <span className="text-[9px] text-silver-gray tracking-widest uppercase font-mono">Target Peer / 匹配对象</span>
+                  <div className="text-right">
+                    <span className="text-xs text-cyan-blue font-serif tracking-widest block">{tag || '同游搭子'}</span>
+                    <span className="text-[8px] text-low-gold tracking-widest mt-0.5 block">唐风爱好者 · 历史极客</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center border-b-[0.5px] border-silver-gray/10 pb-3">
+                  <span className="text-[9px] text-silver-gray tracking-widest uppercase font-mono">Common Route / 共同路线</span>
+                  <span className="text-[10px] text-cyan-blue tracking-widest">大唐遗宝主题路线</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] text-silver-gray tracking-widest uppercase font-mono">Status / 当前状态</span>
+                  <span className="text-[9px] text-stamp-red tracking-widest flex items-center gap-2 font-bold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-stamp-red animate-pulse"></span>
+                    AWAITING CONFIRMATION
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* 四、操作区 */}
+            <div className="w-full space-y-3 mt-auto shrink-0 pb-2">
+              <button 
+                onClick={handleVerify}
+                disabled={isVerifying}
+                className={`w-full py-4 tracking-[0.3em] text-sm transition-all duration-500 flex items-center justify-center gap-4 rounded-sm shadow-xl font-bold uppercase font-mono
+                  ${isVerifying ? 'bg-transparent border-[1px] border-silver-gray/20 text-silver-gray cursor-not-allowed' : 'bg-cyan-blue text-mutton-white active:scale-[0.97]'}`}
+              >
+                {isVerifying ? (
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 border-2 border-silver-gray/30 border-t-silver-gray rounded-full animate-spin"></div>
+                    <span>VERIFYING...</span>
+                  </div>
+                ) : (
+                  'Confirm Combination / 确认合符'
+                )}
+              </button>
+              <button 
+                onClick={onClose}
+                disabled={isVerifying}
+                className="w-full py-2 text-silver-gray text-[9px] tracking-[0.2em] rounded-sm active:scale-[0.98] transition-all uppercase font-mono"
+              >
+                Cancel / 返回稍后再说
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* 五、结果反馈态 */}
       {step === 2 && (
@@ -889,161 +1167,211 @@ const MatchFlow = ({ onClose, tag, onComplete }: { onClose: () => void, tag: str
           <motion.div 
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
             className="absolute inset-0 flex items-center justify-center pointer-events-none"
           >
-            <div className="w-96 h-96 border-[1px] border-low-gold/10 rounded-full"></div>
-            <div className="absolute w-64 h-64 border-[1px] border-low-gold/20 rounded-full"></div>
+            <div className="w-[400px] h-[400px] border-[0.5px] border-low-gold/10 rounded-full animate-pulse"></div>
+            <div className="absolute w-[280px] h-[280px] border-[0.5px] border-low-gold/20 rounded-full"></div>
           </motion.div>
 
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 150, damping: 15 }}
+            className="mb-8 relative z-10"
           >
-            <CheckCircle2 className="w-20 h-20 text-low-gold mb-6" strokeWidth={1} />
+            <div className="w-20 h-20 bg-low-gold rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(184,161,114,0.4)]">
+              <CheckCircle2 className="w-10 h-10 text-mutton-white" strokeWidth={1.5} />
+            </div>
           </motion.div>
           
-          <h2 className="font-serif text-3xl text-cyan-blue mb-4 tracking-widest">合符成功</h2>
+          <h2 className="font-serif text-3xl text-cyan-blue mb-6 tracking-[0.3em] relative z-10">合符成功</h2>
           
-          <div className="bg-mutton-white border-[1px] border-low-gold/30 p-6 rounded-sm shadow-sm mb-12 relative z-10 w-full max-w-[280px]">
-            <p className="text-sm text-cyan-blue tracking-widest leading-loose mb-2 font-serif">
-              契约已生成
-            </p>
+          <div className="bg-mutton-white border-[0.5px] border-low-gold/30 p-6 rounded-sm shadow-lg mb-10 relative z-10 w-full max-w-[280px]">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-low-gold text-mutton-white px-3 py-0.5 text-[8px] tracking-[0.3em] uppercase font-mono">
+              Contract Verified
+            </div>
             <p className="text-xs text-silver-gray tracking-widest leading-loose">
-              已解锁专属纪念内容<br/>
-              您与 {tag || '同游搭子'} 的长安记忆已封存
+              契约已成，长安见证。<br/>
+              你们的数字纪念页已完成拼合，<br/>
+              解锁了专属的“双鱼合符”勋章。
             </p>
           </div>
 
-          <button onClick={onComplete} className="w-full py-4 bg-low-gold text-mutton-white tracking-[0.2em] text-sm rounded-sm shadow-md active:scale-[0.98] transition-transform relative z-10">
-            去查看数字纪念页
+          <button 
+            onClick={onComplete}
+            className="w-full max-w-[280px] py-4 bg-cyan-blue text-mutton-white tracking-[0.3em] text-sm rounded-sm shadow-xl active:scale-[0.97] transition-all font-bold uppercase font-mono relative z-10"
+          >
+            View Contract / 查看合同
           </button>
         </div>
       )}
     </motion.div>
+  </motion.div>
   )
 }
 
 const PeerDiscoveryFlow = ({ onClose, onGoToMatch, onGoToSettings }: { onClose: () => void, onGoToMatch: () => void, onGoToSettings: () => void }) => {
-  const [isSensing, setIsSensing] = useState(true);
-  const [sensingStage, setSensingStage] = useState(0); // 0: searching, 1: entered zone, 2: approaching
+  const [sensingStage, setSensingStage] = useState(0); // 0: searching, 1: entered zone, 2: approaching, 3: ready
 
   useEffect(() => {
-    if (isSensing) {
-      const timer1 = setTimeout(() => setSensingStage(1), 2000);
-      const timer2 = setTimeout(() => setSensingStage(2), 5000);
-      return () => { clearTimeout(timer1); clearTimeout(timer2); };
-    } else {
-      setSensingStage(0);
-    }
-  }, [isSensing]);
+    const timer1 = setTimeout(() => setSensingStage(1), 3000);
+    const timer2 = setTimeout(() => setSensingStage(2), 7000);
+    const timer3 = setTimeout(() => setSensingStage(3), 12000);
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, []);
+
+  const stageHints = [
+    "正在建立感应场...",
+    "已进入发现区，感应增强",
+    "目标正在接近，气场重合",
+    "建议主动靠近并准备拼合鱼符"
+  ];
 
   return (
-    <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="fixed inset-0 bg-[var(--color-bg-base)] z-50 flex flex-col">
-      {/* 一、顶部状态区 */}
-      <div className="p-6 flex justify-between items-center bg-mutton-white border-b-[1px] border-silver-gray/10 shrink-0 shadow-sm z-10">
-        <div>
-          <h2 className="font-serif text-xl text-cyan-blue tracking-widest">附近发现同好</h2>
-          <div className="flex items-center gap-3 mt-2">
-            <div className="flex items-center gap-1.5">
-              <span className={`w-1.5 h-1.5 rounded-full ${isSensing ? 'bg-stamp-red animate-pulse' : 'bg-silver-gray'}`}></span>
-              <span className="text-[10px] text-silver-gray tracking-widest">{isSensing ? '感应已开启' : '感应已关闭'}</span>
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }} 
+      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-4"
+    >
+      <motion.div 
+        initial={{ y: '100%', opacity: 0 }} 
+        animate={{ y: 0, opacity: 1 }} 
+        exit={{ y: '100%', opacity: 0 }} 
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }} 
+        className="w-full max-w-[420px] h-[90vh] bg-[var(--color-bg-base)] rounded-[28px] shadow-2xl overflow-hidden flex flex-col relative"
+      >
+        {/* 一、顶部信息 */}
+        <div className="p-6 pt-8 flex justify-between items-start shrink-0">
+          <div>
+            <h2 className="font-serif text-2xl tracking-[0.2em] text-cyan-blue mb-1">附近发现同好</h2>
+            <div className="flex items-center gap-3 mt-2">
+              <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-stamp-red animate-pulse"></div>
+                <span className="text-[9px] text-cyan-blue tracking-widest uppercase font-mono">Sensing On</span>
+              </div>
+              <span className="text-silver-gray/30 text-[9px]">|</span>
+              <span className="text-[9px] text-silver-gray tracking-widest uppercase font-mono">Vibrate</span>
             </div>
-            <span className="text-[10px] text-silver-gray/30">|</span>
-            <span className="text-[10px] text-silver-gray tracking-widest">震动提示模式</span>
           </div>
-        </div>
-        <button onClick={onClose} className="p-2 -mr-2"><X size={24} className="text-silver-gray" /></button>
-      </div>
-
-      {/* 二、核心提示区 */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8 relative overflow-hidden">
-        <div className="relative w-64 h-64 flex items-center justify-center mb-8">
-          {/* 基础圆环 */}
-          <div className="absolute inset-0 border-[0.5px] border-silver-gray/20 rounded-full"></div>
-          <div className="absolute inset-8 border-[0.5px] border-silver-gray/10 rounded-full"></div>
-          <div className="absolute inset-16 border-[0.5px] border-silver-gray/5 rounded-full"></div>
-
-          {/* 扫描动画 */}
-          {isSensing && sensingStage === 0 && (
-            <>
-              <motion.div animate={{ scale: [1, 2, 3], opacity: [0.8, 0.3, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeOut" }} className="absolute inset-24 bg-cyan-blue/10 rounded-full" />
-              <motion.div animate={{ scale: [1, 2, 3], opacity: [0.8, 0.3, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeOut", delay: 1 }} className="absolute inset-24 bg-cyan-blue/10 rounded-full" />
-            </>
-          )}
-
-          {/* 发现动画 */}
-          {isSensing && sensingStage > 0 && (
-            <>
-              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-10 bg-stamp-red/5 rounded-full" />
-              <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.1, 0.3, 0.1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} className="absolute inset-16 bg-stamp-red/5 rounded-full" />
-            </>
-          )}
-
-          {/* 中心图标 */}
-          <div className={`w-16 h-16 rounded-full flex items-center justify-center z-10 transition-colors duration-500 ${sensingStage > 0 ? 'bg-stamp-red/10 border-[1px] border-stamp-red/30 shadow-[0_0_15px_rgba(186,76,64,0.2)]' : 'bg-cyan-blue/5 border-[1px] border-cyan-blue/20'}`}>
-            <Radio size={24} className={sensingStage > 0 ? 'text-stamp-red' : 'text-cyan-blue'} />
-          </div>
+          <button onClick={onClose} className="p-2 -mr-2 hover:bg-silver-gray/5 rounded-full transition-colors">
+            <X size={24} className="text-silver-gray" />
+          </button>
         </div>
 
-        <div className="text-center h-20">
-          <AnimatePresence mode="wait">
-            {sensingStage === 0 ? (
-              <motion.div key="stage0" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                <p className="text-sm text-cyan-blue tracking-widest mb-2 font-serif">正在感应环境</p>
-                <p className="text-xs text-silver-gray tracking-widest">请保持设备亮屏</p>
+        {/* 二、核心提示区 (感应中心) */}
+        <div className="flex-1 flex flex-col items-center justify-center relative px-8 overflow-y-auto">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+            {/* 呼吸感圆环 */}
+            {[1, 2, 3].map(i => (
+              <motion.div
+                key={i}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ 
+                  scale: [0.8, 1.2 + i * 0.2, 1.5 + i * 0.3], 
+                  opacity: [0, 0.15 - i * 0.03, 0] 
+                }}
+                transition={{ 
+                  duration: 4, 
+                  repeat: Infinity, 
+                  delay: i * 1.2,
+                  ease: "easeOut"
+                }}
+                className="absolute w-64 h-64 border-[0.5px] border-cyan-blue rounded-full"
+              />
+            ))}
+            
+            {/* 核心脉冲 */}
+            <motion.div 
+              animate={{ scale: [1, 1.05, 1], opacity: [0.3, 0.6, 0.3] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-48 h-48 bg-cyan-blue/5 rounded-full blur-3xl"
+            />
+          </div>
+
+          <div className="relative z-10 text-center">
+            <div className="mb-10 relative">
+              <motion.div 
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="w-32 h-32 border-[0.5px] border-dashed border-cyan-blue/30 rounded-full flex items-center justify-center"
+              >
+                <div className="w-24 h-24 border-[0.5px] border-cyan-blue/20 rounded-full flex items-center justify-center">
+                  <Radio size={32} className="text-cyan-blue animate-pulse" />
+                </div>
               </motion.div>
-            ) : sensingStage === 1 ? (
-              <motion.div key="stage1" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                <p className="text-base text-stamp-red tracking-widest mb-2 font-serif">已进入发现区</p>
-                <p className="text-xs text-cyan-blue tracking-widest">附近存在可互动对象</p>
-              </motion.div>
-            ) : (
-              <motion.div key="stage2" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                <p className="text-lg text-stamp-red tracking-widest mb-2 font-serif">目标正在接近</p>
-                <p className="text-xs text-cyan-blue tracking-widest">建议主动靠近并准备拼合鱼符</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              
+              {/* 接近状态指示器 */}
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+                {[0, 1, 2, 3].map(i => (
+                  <div 
+                    key={i} 
+                    className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${
+                      sensingStage >= i ? 'bg-stamp-red scale-125' : 'bg-silver-gray/20'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <motion.div
+              key={sensingStage}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-3"
+            >
+              <p className="font-serif text-xl text-cyan-blue tracking-[0.2em]">
+                {stageHints[sensingStage]}
+              </p>
+              <p className="text-[10px] text-silver-gray tracking-[0.3em] uppercase font-mono">
+                Proximity Sensing / 极近场感应中
+              </p>
+            </motion.div>
+          </div>
         </div>
 
         {/* 三、弱身份提示区 */}
-        <AnimatePresence>
-          {sensingStage > 0 && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-8 bg-mutton-white border-[0.5px] border-silver-gray/20 p-5 rounded-sm shadow-sm w-full max-w-[280px]">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-full bg-silver-gray/10 flex items-center justify-center">
-                  <User size={14} className="text-silver-gray" />
-                </div>
-                <div>
-                  <p className="text-xs text-cyan-blue tracking-widest font-medium">同活动对象</p>
-                  <p className="text-[10px] text-silver-gray tracking-widest mt-0.5">未确认前不显示详细资料</p>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <span className="text-[10px] tracking-widest px-2 py-1 bg-cyan-blue/5 text-cyan-blue rounded-sm">标签相近</span>
-                <span className="text-[10px] tracking-widest px-2 py-1 bg-cyan-blue/5 text-cyan-blue rounded-sm">路线相近</span>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+        <div className="px-8 pb-6 shrink-0">
+          <div className="bg-mutton-white border-[0.5px] border-silver-gray/20 p-5 rounded-sm shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-low-gold/30"></div>
+            <h3 className="text-[9px] text-silver-gray tracking-[0.3em] uppercase font-mono mb-4">Identity Hints / 弱身份线索</h3>
+            
+            <div className="flex flex-wrap gap-2">
+              <span className="px-2.5 py-1 bg-cyan-blue/5 text-cyan-blue text-[9px] tracking-widest rounded-sm border-[0.5px] border-cyan-blue/10">
+                同活动对象
+              </span>
+              <span className="px-2.5 py-1 bg-low-gold/5 text-low-gold text-[9px] tracking-widest rounded-sm border-[0.5px] border-low-gold/10">
+                标签相近
+              </span>
+              <span className="px-2.5 py-1 bg-cyan-blue/5 text-cyan-blue text-[9px] tracking-widest rounded-sm border-[0.5px] border-cyan-blue/10">
+                路线重合度 85%
+              </span>
+            </div>
+          </div>
+        </div>
 
-      {/* 四、底部动作 */}
-      <div className="p-6 space-y-4 bg-mutton-white border-t-[1px] border-silver-gray/10 shrink-0">
-        <button 
-          onClick={onGoToMatch}
-          disabled={sensingStage === 0}
-          className={`w-full py-4 tracking-[0.2em] text-sm transition-all duration-500 rounded-sm shadow-md flex justify-center items-center gap-2
-            ${sensingStage > 0 ? 'bg-cyan-blue text-mutton-white active:scale-[0.98]' : 'bg-silver-gray/10 text-silver-gray/50 cursor-not-allowed'}`}
-        >
-          {sensingStage > 0 ? '我已找到对方，去合符确认' : '等待感应...'}
-        </button>
-        <button onClick={onGoToSettings} className="w-full py-4 border-[1px] border-silver-gray/20 text-cyan-blue tracking-[0.2em] text-sm rounded-sm active:scale-[0.98] transition-transform bg-mutton-white">
-          去管理感应设置
-        </button>
-      </div>
+        {/* 四、底部动作 */}
+        <div className="p-8 pt-0 space-y-3 shrink-0 relative z-20 pb-6">
+          <button 
+            onClick={onGoToMatch}
+            className="w-full py-4 bg-cyan-blue text-mutton-white text-sm tracking-[0.3em] rounded-sm shadow-xl active:scale-[0.97] transition-all flex justify-center items-center gap-3 uppercase font-mono font-bold"
+          >
+            Confirm Match / 去合符确认
+            <ChevronRight size={18} />
+          </button>
+          <button 
+            onClick={onGoToSettings}
+            className="w-full py-2 text-silver-gray text-[9px] tracking-[0.2em] rounded-sm active:scale-[0.98] transition-all uppercase font-mono"
+          >
+            Manage Sensing / 管理感应设置
+          </button>
+        </div>
+      </motion.div>
     </motion.div>
   );
 };
