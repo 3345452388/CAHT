@@ -273,13 +273,18 @@ const HomeTab = ({ onOpenFlow, tag, hasMatched, spots, sensingEnabled, onChangeT
           </div>
         </div>
 
-        <div className="relative mb-6">
+        <div className="relative">
           {sensingEnabled ? (
-            <div className="space-y-3">
-              <p className="text-xs text-cyan-blue/80 tracking-widest leading-relaxed">
-                感应场已建立。附近发现 <span className="text-stamp-red font-mono font-bold">2</span> 名潜在同好，路线重合度极高。
-              </p>
-              <div className="flex gap-1">
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <p className="text-xs text-cyan-blue font-medium tracking-widest">
+                  已发现可互动对象
+                </p>
+                <p className="text-[10px] text-silver-gray tracking-widest leading-relaxed">
+                  当前路线重合度较高，建议主动接近并准备合符。
+                </p>
+              </div>
+              <div className="flex gap-1 mb-4">
                 {[1, 2, 3].map(i => (
                   <motion.div 
                     key={i}
@@ -289,11 +294,26 @@ const HomeTab = ({ onOpenFlow, tag, hasMatched, spots, sensingEnabled, onChangeT
                   ></motion.div>
                 ))}
               </div>
+              <button 
+                onClick={() => onOpenSubView('peer-discovery')}
+                className="w-full py-3 bg-stamp-red/5 border-[0.5px] border-stamp-red/20 text-stamp-red tracking-[0.2em] text-xs rounded-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              >
+                <span>进入感应发现</span>
+                <ChevronRight size={14} />
+              </button>
             </div>
           ) : (
-            <p className="text-xs text-silver-gray tracking-widest leading-relaxed">
-              开启感应以发现附近路线相近的同好，开启一段跨越时空的“合符”之旅。
-            </p>
+            <div className="space-y-4">
+              <p className="text-xs text-silver-gray tracking-widest leading-relaxed">
+                开启感应以发现附近路线相近的同好，开启一段跨越时空的“合符”之旅。
+              </p>
+              <button 
+                onClick={() => onOpenSubView('sensing-settings')}
+                className="w-full py-3 border-[0.5px] border-silver-gray/30 text-cyan-blue tracking-[0.2em] text-xs rounded-sm active:scale-[0.98] transition-all"
+              >
+                开启同好感应
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -355,16 +375,16 @@ const MapTab = ({ onOpenFlow, onOpenSubView, onSelectSpot, spots }: { onOpenFlow
           let timeText = `预计步行 ${5 + (index - completedCount) * 2} min`;
 
           if (isCompleted) {
-            cardStyle = 'bg-cyan-blue/5 border-cyan-blue/10 opacity-60';
+            cardStyle = 'bg-cyan-blue/5 border-cyan-blue/20 opacity-80';
             statusLabel = '已完成';
             statusColor = 'text-cyan-blue bg-cyan-blue/10';
             timeText = '已探索完毕';
           } else if (isActive) {
-            cardStyle = 'bg-mutton-white border-cyan-blue shadow-[0_8px_24px_rgba(28,43,45,0.1)] z-10 scale-[1.02]';
+            cardStyle = 'bg-mutton-white border-cyan-blue/60 shadow-[0_8px_24px_rgba(28,43,45,0.12)] z-10 scale-[1.02]';
             statusLabel = '当前目标';
             statusColor = 'text-mutton-white bg-stamp-red';
           } else {
-            cardStyle = 'bg-mutton-white border-silver-gray/20 opacity-40';
+            cardStyle = 'bg-mutton-white border-silver-gray/30 opacity-70';
             statusLabel = '未开启';
             statusColor = 'text-silver-gray bg-silver-gray/10';
           }
@@ -378,7 +398,7 @@ const MapTab = ({ onOpenFlow, onOpenSubView, onSelectSpot, spots }: { onOpenFlow
                 {isCompleted ? (
                   <CheckCircle2 size={16} className="text-mutton-white" />
                 ) : (
-                  <span className={`font-mono text-xs ${isActive ? 'text-mutton-white' : 'text-silver-gray'}`}>{index + 1}</span>
+                  <span className={`font-mono text-xs ${isActive ? 'text-mutton-white font-bold' : 'text-silver-gray'}`}>{index + 1}</span>
                 )}
               </div>
 
@@ -391,7 +411,7 @@ const MapTab = ({ onOpenFlow, onOpenSubView, onSelectSpot, spots }: { onOpenFlow
                 
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className={`font-serif text-lg tracking-widest mb-1 ${isActive ? 'text-cyan-blue font-bold' : 'text-cyan-blue'}`}>{spot.name}</h3>
+                    <h3 className={`font-serif text-lg tracking-widest mb-1 ${isActive ? 'text-cyan-blue font-bold' : 'text-cyan-blue/80'}`}>{spot.name}</h3>
                     <div className="flex items-center gap-2">
                       <span className="text-[9px] text-silver-gray tracking-widest uppercase font-mono">{typeText}</span>
                       <span className="text-silver-gray/30 text-[9px]">|</span>
@@ -411,14 +431,16 @@ const MapTab = ({ onOpenFlow, onOpenSubView, onSelectSpot, spots }: { onOpenFlow
                     className="mt-2 w-full py-3 bg-cyan-blue text-mutton-white text-[10px] tracking-[0.3em] rounded-sm flex justify-center items-center gap-2 uppercase font-mono shadow-md"
                   >
                     <Scan size={14} />
-                    Execute Mission / 执行打卡
+                    执行打卡
                   </motion.button>
                 )}
                 
                 {isCompleted && (
-                  <div className="mt-2 flex items-center gap-2 text-[10px] text-cyan-blue/60 tracking-widest italic">
-                    <Ticket size={12} />
-                    已解锁：{spot.relic}
+                  <div className="mt-4 pt-4 border-t-[0.5px] border-cyan-blue/10 flex items-center gap-2 text-[10px] text-cyan-blue/80 tracking-widest">
+                    <div className="w-5 h-5 rounded-full bg-cyan-blue/10 flex items-center justify-center">
+                      <Ticket size={10} className="text-cyan-blue" />
+                    </div>
+                    <span>已解锁内容：{spot.relic}印记</span>
                   </div>
                 )}
               </div>
@@ -429,9 +451,9 @@ const MapTab = ({ onOpenFlow, onOpenSubView, onSelectSpot, spots }: { onOpenFlow
 
       {/* 三、底部提示 */}
       <div className="px-8 py-10 text-center">
-        <p className="text-[10px] text-silver-gray tracking-[0.3em] uppercase font-mono leading-loose">
-          Complete more points to unlock higher match eligibility.<br/>
-          完成更多点位以解锁更高合符资格。
+        <p className="text-[10px] text-silver-gray tracking-[0.2em] leading-loose">
+          完成更多点位，可解锁更高合符资格。<br/>
+          路线完成度将影响后续合符条件。
         </p>
       </div>
     </motion.div>
@@ -497,17 +519,36 @@ const CommemorationTab = ({ tag, hasMatched, onOpenSubView, spots }: { tag: stri
               </div>
             </motion.div>
           ) : (
-            <div className="py-24 flex flex-col items-center justify-center text-silver-gray/40 border-[0.5px] border-dashed border-silver-gray/20 m-2 bg-silver-gray/5">
+            <div className="py-12 flex flex-col items-center justify-center text-cyan-blue/80 border-[0.5px] border-dashed border-silver-gray/20 m-2 bg-silver-gray/5">
               <div className="relative mb-6">
-                <Ticket size={48} strokeWidth={1} />
+                <Ticket size={48} strokeWidth={1} className="text-silver-gray/40" />
                 <motion.div 
                   animate={{ opacity: [0.2, 0.5, 0.2] }}
                   transition={{ duration: 2, repeat: Infinity }}
                   className="absolute inset-0 bg-cyan-blue/5 blur-xl rounded-full"
                 />
               </div>
-              <p className="text-xs tracking-[0.3em] font-serif mb-2">契约待解锁</p>
-              <p className="text-[9px] tracking-widest font-mono uppercase">Awaiting Match Confirmation</p>
+              <p className="text-xs tracking-[0.3em] font-serif mb-6 text-silver-gray">契约待解锁</p>
+              
+              <div className="w-full px-8 space-y-4">
+                <div className="flex justify-between items-center border-b-[0.5px] border-silver-gray/10 pb-2">
+                  <span className="text-[10px] text-silver-gray tracking-widest">当前合符状态</span>
+                  <span className="text-[10px] text-stamp-red font-bold tracking-widest">待确认</span>
+                </div>
+                <div className="flex justify-between items-center border-b-[0.5px] border-silver-gray/10 pb-2">
+                  <span className="text-[10px] text-silver-gray tracking-widest">已满足条件</span>
+                  <span className="text-[10px] text-cyan-blue tracking-widest">路线 {spots.filter(s => s.status === '已打卡').length}/{spots.length}，点位印记已获得</span>
+                </div>
+                <div className="pt-2 flex flex-col items-center gap-3">
+                  <span className="text-[9px] text-silver-gray tracking-widest uppercase font-mono">Next Step / 下一步建议</span>
+                  <button 
+                    onClick={() => onOpenSubView('peer-discovery')}
+                    className="px-6 py-2 bg-cyan-blue text-mutton-white text-[10px] tracking-[0.2em] rounded-sm shadow-sm"
+                  >
+                    前往发现同好 / 完成实体拼合
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -1170,7 +1211,7 @@ const MatchFlow = ({ onClose, tag, onComplete }: { onClose: () => void, tag: str
                 </div>
 
                 <div className="flex justify-between items-center border-b-[0.5px] border-silver-gray/10 pb-3 mb-3 relative z-10">
-                  <span className="text-[10px] text-silver-gray tracking-widest">匹配对象</span>
+                  <span className="text-[10px] text-silver-gray tracking-widest">对象身份</span>
                   <span className="text-xs text-cyan-blue font-serif tracking-widest">{tag || '同游搭子'}</span>
                 </div>
                 <div className="flex justify-between items-center border-b-[0.5px] border-silver-gray/10 pb-3 mb-3 relative z-10">
@@ -1178,7 +1219,7 @@ const MatchFlow = ({ onClose, tag, onComplete }: { onClose: () => void, tag: str
                   <span className="text-[10px] text-cyan-blue tracking-widest">陕西历史博物馆导览</span>
                 </div>
                 <div className="flex justify-between items-center relative z-10">
-                  <span className="text-[10px] text-silver-gray tracking-widest">当前状态</span>
+                  <span className="text-[10px] text-silver-gray tracking-widest">合符状态</span>
                   <span className="text-[10px] text-low-gold tracking-widest flex items-center gap-1.5 font-medium">
                     <span className="w-1.5 h-1.5 rounded-full bg-low-gold animate-pulse"></span>
                     待双方确认
@@ -1424,18 +1465,28 @@ const PeerDiscoveryFlow = ({ onClose, onGoToMatch, onGoToSettings }: { onClose: 
 
 // --- Sub Views ---
 const FullScreenView = ({ title, subtitle, onClose, children }: { title: string, subtitle?: string, onClose: () => void, children: React.ReactNode }) => (
-  <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="fixed inset-0 bg-[var(--color-bg-base)] z-50 flex flex-col">
-    <div className="p-6 pt-12 flex justify-between items-center bg-mutton-white border-b-[1px] border-silver-gray/10 shrink-0">
-      <div>
-        <h2 className="font-serif text-xl text-cyan-blue tracking-widest">{title}</h2>
-        {subtitle && <p className="font-mono text-[10px] text-silver-gray tracking-widest uppercase mt-1">{subtitle}</p>}
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-cyan-blue/40 backdrop-blur-sm p-4">
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+      animate={{ opacity: 1, scale: 1, y: 0 }} 
+      exit={{ opacity: 0, scale: 0.95, y: 20 }} 
+      transition={{ type: 'spring', damping: 25, stiffness: 200 }} 
+      className="w-full max-w-[420px] max-h-[90vh] bg-[var(--color-bg-base)] rounded-[28px] shadow-2xl overflow-hidden flex flex-col relative"
+    >
+      <div className="p-6 pt-8 flex justify-between items-start bg-mutton-white border-b-[0.5px] border-silver-gray/10 shrink-0">
+        <div>
+          {subtitle && <span className="font-mono text-[10px] text-low-gold tracking-[0.3em] uppercase mb-1 block">{subtitle}</span>}
+          <h2 className="font-serif text-2xl text-cyan-blue tracking-widest">{title}</h2>
+        </div>
+        <button onClick={onClose} className="p-2 -mr-2 hover:bg-silver-gray/5 rounded-full transition-colors">
+          <X size={24} className="text-silver-gray" />
+        </button>
       </div>
-      <button onClick={onClose} className="p-2 -mr-2"><X size={24} className="text-silver-gray" /></button>
-    </div>
-    <div className="flex-1 overflow-y-auto">
-      {children}
-    </div>
-  </motion.div>
+      <div className="flex-1 overflow-y-auto">
+        {children}
+      </div>
+    </motion.div>
+  </div>
 );
 
 const InstructionsView = ({ onClose }: { onClose: () => void }) => (
@@ -1774,8 +1825,18 @@ export default function App() {
         )}
         {subViewState === 'ticket-details' && (
           <FullScreenView title="票证详情" subtitle="Ticket Details" onClose={() => setSubViewState('historical-tickets')}>
-            <div className="p-6">
-              <TicketCard tag="汉服同袍" hasMatched={true} spots={spots} />
+            <div className="p-6 flex flex-col items-center">
+              <div className="w-full transform scale-95 origin-top">
+                <TicketCard tag="汉服同袍" hasMatched={true} spots={spots} />
+              </div>
+              <div className="w-full mt-6 flex gap-4 px-2">
+                <button className="flex-1 py-3 border-[0.5px] border-silver-gray/30 text-cyan-blue tracking-[0.2em] text-xs rounded-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                  <span>保存图片</span>
+                </button>
+                <button className="flex-1 py-3 bg-cyan-blue text-mutton-white tracking-[0.2em] text-xs rounded-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-md">
+                  <span>分享票证</span>
+                </button>
+              </div>
             </div>
           </FullScreenView>
         )}
