@@ -941,7 +941,7 @@ const ActivationFlow = ({ onClose, onComplete }: { onClose: () => void, onComple
 };
 
 // Flow B: Check-in
-const CheckInFlow = ({ onClose, spot }: { onClose: () => void, spot: any }) => {
+const CheckInFlow = ({ onCancel, onComplete, spot }: { onCancel: () => void, onComplete: () => void, spot: any }) => {
   const [step, setStep] = useState(1);
 
   return (
@@ -960,7 +960,7 @@ const CheckInFlow = ({ onClose, spot }: { onClose: () => void, spot: any }) => {
       >
         <div className="p-6 flex justify-between items-center shrink-0">
           <span className="font-mono text-[10px] text-silver-gray tracking-widest uppercase">Check-in Flow</span>
-          <button onClick={onClose} className="p-2 -mr-2 hover:bg-silver-gray/5 rounded-full transition-colors">
+          <button onClick={onCancel} className="p-2 -mr-2 hover:bg-silver-gray/5 rounded-full transition-colors">
             <X size={24} className="text-silver-gray" />
           </button>
         </div>
@@ -1067,14 +1067,14 @@ const CheckInFlow = ({ onClose, spot }: { onClose: () => void, spot: any }) => {
 
             {/* 下一步引导区 */}
             <div className="mt-auto space-y-3 shrink-0">
-              <button onClick={onClose} className="w-full py-4 bg-low-gold text-mutton-white tracking-[0.3em] text-sm rounded-sm shadow-xl active:scale-[0.97] transition-all font-bold uppercase font-mono">
+              <button onClick={onComplete} className="w-full py-4 bg-low-gold text-mutton-white tracking-[0.3em] text-sm rounded-sm shadow-xl active:scale-[0.97] transition-all font-bold uppercase font-mono">
                 前往下一个点位
               </button>
               <div className="flex gap-3">
-                <button onClick={onClose} className="flex-1 py-3 border-[0.5px] border-silver-gray/30 text-cyan-blue tracking-[0.2em] text-[10px] rounded-sm active:scale-[0.97] transition-all bg-mutton-white">
+                <button onClick={onComplete} className="flex-1 py-3 border-[0.5px] border-silver-gray/30 text-cyan-blue tracking-[0.2em] text-[10px] rounded-sm active:scale-[0.97] transition-all bg-mutton-white">
                   返回地图
                 </button>
-                <button onClick={onClose} className="flex-1 py-3 border-[0.5px] border-silver-gray/30 text-cyan-blue tracking-[0.2em] text-[10px] rounded-sm active:scale-[0.97] transition-all bg-mutton-white">
+                <button onClick={onComplete} className="flex-1 py-3 border-[0.5px] border-silver-gray/30 text-cyan-blue tracking-[0.2em] text-[10px] rounded-sm active:scale-[0.97] transition-all bg-mutton-white">
                   查看纪念册
                 </button>
               </div>
@@ -1793,7 +1793,7 @@ export default function App() {
           <ActivationFlow onClose={() => setActiveFlow('none')} onComplete={(tag) => { setUserTag(tag); setActiveFlow('none'); }} />
         )}
         {activeFlow === 'checkin' && (
-          <CheckInFlow onClose={handleCheckInComplete} spot={selectedSpot || spots[0]} />
+          <CheckInFlow onCancel={() => setActiveFlow('none')} onComplete={handleCheckInComplete} spot={selectedSpot || spots[0]} />
         )}
         {activeFlow === 'match' && (
           <MatchFlow onClose={() => setActiveFlow('none')} tag={userTag} onComplete={() => { setHasMatched(true); setActiveFlow('none'); setActiveTab('commemoration'); }} />
