@@ -22,10 +22,10 @@ const TwinFishRight = ({ className }: { className?: string }) => (
 // --- Types ---
 type TabState = 'home' | 'map' | 'commemoration' | 'profile';
 type FlowState = 'none' | 'activation' | 'checkin' | 'match' | 'peer-discovery';
-type SubViewState = 'none' | 'instructions' | 'spot-details' | 'edit-profile' | 'historical-tickets' | 'share-card' | 'identity-tag' | 'ticket-details' | 'sensing-settings';
+type SubViewState = 'none' | 'instructions' | 'spot-details' | 'edit-profile' | 'historical-tickets' | 'share-card' | 'identity-tag' | 'ticket-details' | 'sensing-settings' | 'relic-details';
 
 // --- Reusable Components ---
-const TicketCard = ({ tag, hasMatched, spots }: { tag: string, hasMatched?: boolean, spots?: any[] }) => {
+const TicketCard = ({ tag, hasMatched, spots, onSelectSpot, onOpenSubView }: { tag: string, hasMatched?: boolean, spots?: any[], onSelectSpot?: (spot: any) => void, onOpenSubView?: (view: SubViewState) => void }) => {
   const today = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.');
   const [barcode, setBarcode] = useState<number[]>([]);
   useEffect(() => {
@@ -35,96 +35,114 @@ const TicketCard = ({ tag, hasMatched, spots }: { tag: string, hasMatched?: bool
   const completedSpots = spots?.filter(s => s.status === '已打卡') || [];
 
   return (
-    <div className="w-full bg-mutton-white rounded-sm shadow-[0_8px_30px_rgba(28,43,45,0.12)] flex flex-col relative overflow-hidden border-[1px] border-low-gold/30">
+    <div className="w-full bg-mutton-white rounded-md shadow-[0_16px_40px_rgba(28,43,45,0.15)] flex flex-col relative overflow-hidden border-[0.5px] border-low-gold/40">
       {/* Top Header Section */}
-      <div className="p-6 pb-4 bg-[url('https://images.unsplash.com/photo-1615800098779-1be32e60cca3?q=80&w=400&auto=format&fit=crop')] bg-cover relative">
-        <div className="absolute inset-0 bg-mutton-white/90 backdrop-blur-sm"></div>
-        <div className="flex justify-between items-start relative z-10">
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-stamp-red rounded-full"></div>
-            <h3 className="font-serif text-lg text-cyan-blue tracking-[0.2em]">陕西历史博物馆导览</h3>
-          </div>
-          <div className="text-right">
-            <p className="font-mono text-[9px] text-silver-gray tracking-widest uppercase mb-1">SERIAL NO.</p>
-            <p className="font-mono text-sm text-cyan-blue tracking-wider">CA-8492</p>
+      <div className="pt-10 pb-8 px-6 bg-[url('https://images.unsplash.com/photo-1615800098779-1be32e60cca3?q=80&w=400&auto=format&fit=crop')] bg-cover bg-center relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-mutton-white/95 via-mutton-white/80 to-mutton-white/95 backdrop-blur-[2px]"></div>
+        <div className="flex justify-between items-start relative z-10 mb-8">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-1.5 h-1.5 bg-stamp-red rounded-full"></div>
+              <span className="font-mono text-[9px] text-stamp-red tracking-widest uppercase">Official Souvenir</span>
+            </div>
+            <h3 className="font-serif text-xl text-cyan-blue tracking-[0.2em]">陕西历史博物馆导览</h3>
+            <p className="font-serif text-xs text-cyan-blue/60 tracking-widest">大唐遗宝主题路线</p>
           </div>
         </div>
-        <div className="mt-6 relative z-10 flex justify-between items-end">
+        <div className="relative z-10 flex justify-between items-end border-t-[0.5px] border-cyan-blue/10 pt-4">
           <div>
-            <p className="font-mono text-[9px] text-silver-gray tracking-widest mb-1 uppercase">Date / 日期</p>
-            <p className="font-serif text-lg text-cyan-blue tracking-widest">{today}</p>
+            <p className="font-mono text-[9px] text-silver-gray tracking-widest mb-1 uppercase">Serial No.</p>
+            <p className="font-mono text-sm text-cyan-blue tracking-wider">CA-8492-7731</p>
           </div>
           <div className="text-right">
-            <p className="font-mono text-[9px] text-silver-gray tracking-widest mb-1 uppercase">Identity / 身份</p>
-            <p className="font-serif text-lg text-cyan-blue tracking-widest">{tag || '同游搭子'}</p>
+            <p className="font-mono text-[9px] text-silver-gray tracking-widest mb-1 uppercase">Date</p>
+            <p className="font-mono text-sm text-cyan-blue tracking-widest">{today}</p>
           </div>
         </div>
       </div>
 
       {/* Perforation Line */}
-      <div className="h-4 relative bg-mutton-white flex items-center">
-        <div className="absolute left-0 w-3 h-4 bg-[var(--color-bg-base)] rounded-r-full shadow-inner border-y-[1px] border-r-[1px] border-low-gold/30"></div>
+      <div className="h-6 relative bg-mutton-white flex items-center z-20">
+        <div className="absolute -left-3 w-6 h-6 bg-[var(--color-bg-base)] rounded-full shadow-inner border-[0.5px] border-low-gold/30"></div>
         <div className="w-full border-t-[1.5px] border-dashed border-low-gold/40 mx-4"></div>
-        <div className="absolute right-0 w-3 h-4 bg-[var(--color-bg-base)] rounded-l-full shadow-inner border-y-[1px] border-l-[1px] border-low-gold/30"></div>
+        <div className="absolute -right-3 w-6 h-6 bg-[var(--color-bg-base)] rounded-full shadow-inner border-[0.5px] border-low-gold/30"></div>
       </div>
 
       {/* Middle Content Section */}
-      <div className="p-6 pt-4 space-y-6 relative bg-mutton-white">
+      <div className="px-6 py-8 space-y-8 relative bg-mutton-white flex-1">
         {/* Watermark */}
         <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-          <TwinFishLeft className="w-48 h-48 text-cyan-blue" />
+          <TwinFishLeft className="w-64 h-64 text-cyan-blue" />
         </div>
         
-        <div className="grid grid-cols-2 gap-6 relative z-10">
-          <div className="col-span-2 flex justify-between items-center border-b-[0.5px] border-silver-gray/20 pb-4">
+        <div className="relative z-10 flex flex-col gap-8">
+          <div className="flex justify-between items-center">
             <div>
-              <p className="font-mono text-[9px] text-silver-gray tracking-widest mb-1 uppercase">Match Status / 合符状态</p>
+              <p className="font-mono text-[9px] text-silver-gray tracking-widest mb-1 uppercase">Identity / 身份标签</p>
+              <p className="font-serif text-lg text-cyan-blue tracking-widest">{tag || '同游搭子'}</p>
+            </div>
+            <div className="text-right">
+              <p className="font-mono text-[9px] text-silver-gray tracking-widest mb-1 uppercase">Status / 状态</p>
               <p className={`font-serif text-lg tracking-[0.2em] ${hasMatched ? 'text-stamp-red' : 'text-cyan-blue'}`}>
                 {hasMatched ? '契约达成' : '等待合符'}
               </p>
             </div>
-            {hasMatched && (
-              <div className="w-12 h-12 border-[1.5px] border-stamp-red text-stamp-red flex items-center justify-center transform -rotate-12 opacity-80 mix-blend-multiply rounded-sm">
-                <span className="font-serif text-sm leading-none tracking-[0.2em]" style={{ writingMode: 'vertical-rl' }}>已合</span>
-              </div>
-            )}
           </div>
           
-          <div className="col-span-2">
+          <div>
             <div className="flex justify-between items-end mb-3">
               <p className="font-mono text-[9px] text-silver-gray tracking-widest uppercase">Exploration / 探索进度</p>
               <p className="font-serif text-sm text-cyan-blue tracking-widest">{completedSpots.length} / {spots?.length || 0} 点位</p>
             </div>
             
             {/* Collected Badges */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 p-4 bg-silver-gray/5 border-[0.5px] border-silver-gray/10 rounded-sm min-h-[80px]">
               {completedSpots.length > 0 ? completedSpots.map((spot, i) => (
-                <div key={i} className="px-2 py-1 border-[0.5px] border-low-gold/50 bg-low-gold/10 text-low-gold text-[10px] tracking-widest rounded-sm font-serif">
+                <div 
+                  key={i} 
+                  onClick={(e) => {
+                    if (onSelectSpot && onOpenSubView) {
+                      e.stopPropagation();
+                      onSelectSpot(spot);
+                      onOpenSubView('relic-details');
+                    }
+                  }}
+                  className={`px-3 py-1.5 border-[0.5px] border-low-gold/50 bg-low-gold/10 text-low-gold text-xs tracking-widest rounded-sm font-serif shadow-sm ${onSelectSpot ? 'cursor-pointer hover:bg-low-gold/20 transition-colors' : ''}`}
+                >
                   {spot.relic}
                 </div>
               )) : (
-                <p className="text-xs text-silver-gray tracking-widest font-serif">暂无收集印记</p>
+                <p className="text-xs text-silver-gray/60 tracking-widest font-serif w-full text-center mt-2">暂无收集印记</p>
               )}
             </div>
           </div>
         </div>
+        
+        {hasMatched && (
+          <div className="absolute top-4 right-4 w-16 h-16 border-[1.5px] border-stamp-red text-stamp-red flex items-center justify-center transform -rotate-12 opacity-80 mix-blend-multiply rounded-sm pointer-events-none">
+            <span className="font-serif text-lg leading-none tracking-[0.2em]" style={{ writingMode: 'vertical-rl' }}>已合</span>
+          </div>
+        )}
       </div>
 
       {/* Bottom Barcode Section */}
-      <div className="p-6 pt-4 border-t-[1px] border-solid border-low-gold/20 flex justify-between items-end bg-low-gold/5 relative">
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-[2px] h-10 opacity-60">
+      <div className="p-6 py-8 border-t-[1px] border-dashed border-silver-gray/20 flex justify-between items-end bg-silver-gray/5 relative">
+        <div className="flex flex-col gap-3 w-full">
+          <div className="flex justify-between items-center w-full">
+            <p className="font-mono text-[9px] text-silver-gray tracking-widest uppercase">Digital Souvenir</p>
+            <p className="font-mono text-[9px] text-silver-gray tracking-widest">08492 77310 99214</p>
+          </div>
+          <div className="flex gap-[2px] h-12 opacity-60 w-full justify-between">
             {barcode.map((width, i) => (
-              <div key={i} className="bg-cyan-blue rounded-sm" style={{ width: `${width}px` }}></div>
+              <div key={i} className="bg-cyan-blue rounded-sm" style={{ width: `${width}px`, flexShrink: 0 }}></div>
             ))}
           </div>
-          <p className="font-mono text-[9px] text-silver-gray tracking-widest">08492 77310 99214</p>
         </div>
         
         {/* Decorative Seal */}
-        <div className="absolute right-6 bottom-6 w-16 h-16 border-[1px] border-low-gold/40 rounded-full flex items-center justify-center opacity-50">
-          <div className="w-14 h-14 border-[0.5px] border-dashed border-low-gold/60 rounded-full flex items-center justify-center">
-            <span className="font-serif text-xs text-low-gold tracking-[0.2em]" style={{ writingMode: 'vertical-rl' }}>长安印</span>
+        <div className="absolute right-8 -top-8 w-16 h-16 border-[1px] border-stamp-red/40 rounded-full flex items-center justify-center opacity-80 bg-mutton-white shadow-sm transform rotate-12">
+          <div className="w-14 h-14 border-[0.5px] border-dashed border-stamp-red/60 rounded-full flex items-center justify-center">
+            <span className="font-serif text-xs text-stamp-red tracking-[0.2em]" style={{ writingMode: 'vertical-rl' }}>长安印</span>
           </div>
         </div>
       </div>
@@ -133,7 +151,7 @@ const TicketCard = ({ tag, hasMatched, spots }: { tag: string, hasMatched?: bool
 };
 
 // --- Tabs ---
-const HomeTab = ({ onOpenFlow, tag, hasMatched, spots, sensingEnabled, onChangeTab }: { onOpenFlow: (flow: FlowState) => void, tag: string, hasMatched: boolean, spots: any[], sensingEnabled: boolean, onChangeTab: (tab: TabState) => void }) => {
+const HomeTab = ({ onOpenFlow, onOpenSubView, tag, hasMatched, spots, sensingEnabled, onChangeTab }: { onOpenFlow: (flow: FlowState) => void, onOpenSubView: (view: SubViewState) => void, tag: string, hasMatched: boolean, spots: any[], sensingEnabled: boolean, onChangeTab: (tab: TabState) => void }) => {
   const completedCount = spots.filter(s => s.status === '已打卡').length;
   const totalSpots = spots.length;
   const isAllCompleted = completedCount === totalSpots;
@@ -147,6 +165,10 @@ const HomeTab = ({ onOpenFlow, tag, hasMatched, spots, sensingEnabled, onChangeT
       currentStatus = '已完成';
       primaryActionText = '生成数字纪念页';
       primaryAction = () => onChangeTab('commemoration');
+    } else if (isAllCompleted && !hasMatched) {
+      currentStatus = '待合符';
+      primaryActionText = '去合符确认';
+      primaryAction = () => onOpenFlow('peer-discovery');
     } else if (hasMatched) {
       currentStatus = '已合符';
       primaryActionText = '查看合符结果';
@@ -295,7 +317,7 @@ const HomeTab = ({ onOpenFlow, tag, hasMatched, spots, sensingEnabled, onChangeT
                 ))}
               </div>
               <button 
-                onClick={() => onOpenSubView('peer-discovery')}
+                onClick={() => onOpenFlow('peer-discovery')}
                 className="w-full py-3 bg-stamp-red/5 border-[0.5px] border-stamp-red/20 text-stamp-red tracking-[0.2em] text-xs rounded-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
                 <span>进入感应发现</span>
@@ -365,8 +387,8 @@ const MapTab = ({ onOpenFlow, onOpenSubView, onSelectSpot, spots }: { onOpenFlow
 
         {spots.map((spot, index) => {
           const isCompleted = spot.status === '已打卡';
-          const isActive = spot.status === '未打卡' && index === completedCount;
-          const isLocked = spot.status === '未打卡' && index > completedCount;
+          const isActive = spot.status === '未打卡';
+          const isLocked = false;
 
           let cardStyle = '';
           let statusLabel = '';
@@ -375,16 +397,16 @@ const MapTab = ({ onOpenFlow, onOpenSubView, onSelectSpot, spots }: { onOpenFlow
           let timeText = `预计步行 ${5 + (index - completedCount) * 2} min`;
 
           if (isCompleted) {
-            cardStyle = 'bg-cyan-blue/5 border-cyan-blue/20 opacity-80';
+            cardStyle = 'bg-cyan-blue/5 border-cyan-blue/20 opacity-90';
             statusLabel = '已完成';
             statusColor = 'text-cyan-blue bg-cyan-blue/10';
             timeText = '已探索完毕';
           } else if (isActive) {
-            cardStyle = 'bg-mutton-white border-cyan-blue/60 shadow-[0_8px_24px_rgba(28,43,45,0.12)] z-10 scale-[1.02]';
+            cardStyle = 'bg-mutton-white border-cyan-blue border-[1.5px] shadow-[0_8px_24px_rgba(28,43,45,0.15)] z-10 scale-[1.02]';
             statusLabel = '当前目标';
             statusColor = 'text-mutton-white bg-stamp-red';
           } else {
-            cardStyle = 'bg-mutton-white border-silver-gray/30 opacity-70';
+            cardStyle = 'bg-mutton-white border-silver-gray/20 opacity-60';
             statusLabel = '未开启';
             statusColor = 'text-silver-gray bg-silver-gray/10';
           }
@@ -411,7 +433,7 @@ const MapTab = ({ onOpenFlow, onOpenSubView, onSelectSpot, spots }: { onOpenFlow
                 
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className={`font-serif text-lg tracking-widest mb-1 ${isActive ? 'text-cyan-blue font-bold' : 'text-cyan-blue/80'}`}>{spot.name}</h3>
+                    <h3 className={`font-serif tracking-widest mb-1 ${isActive ? 'text-cyan-blue font-bold text-xl' : isLocked ? 'text-cyan-blue/70 font-medium text-lg' : 'text-cyan-blue/90 text-lg'}`}>{spot.name}</h3>
                     <div className="flex items-center gap-2">
                       <span className="text-[9px] text-silver-gray tracking-widest uppercase font-mono">{typeText}</span>
                       <span className="text-silver-gray/30 text-[9px]">|</span>
@@ -436,11 +458,14 @@ const MapTab = ({ onOpenFlow, onOpenSubView, onSelectSpot, spots }: { onOpenFlow
                 )}
                 
                 {isCompleted && (
-                  <div className="mt-4 pt-4 border-t-[0.5px] border-cyan-blue/10 flex items-center gap-2 text-[10px] text-cyan-blue/80 tracking-widest">
-                    <div className="w-5 h-5 rounded-full bg-cyan-blue/10 flex items-center justify-center">
-                      <Ticket size={10} className="text-cyan-blue" />
+                  <div 
+                    onClick={() => { onSelectSpot(spot); onOpenSubView('relic-details'); }}
+                    className="mt-4 pt-4 border-t-[0.5px] border-cyan-blue/20 flex items-center gap-3 text-[11px] text-cyan-blue tracking-widest bg-cyan-blue/5 p-3 rounded-sm cursor-pointer hover:bg-cyan-blue/10 transition-colors"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-low-gold/20 flex items-center justify-center shrink-0 border-[0.5px] border-low-gold/40">
+                      <Ticket size={12} className="text-low-gold" />
                     </div>
-                    <span>已解锁内容：{spot.relic}印记</span>
+                    <span className="font-serif"><span className="text-silver-gray text-[10px] mr-1">已解锁印记:</span> {spot.relic}</span>
                   </div>
                 )}
               </div>
@@ -460,11 +485,11 @@ const MapTab = ({ onOpenFlow, onOpenSubView, onSelectSpot, spots }: { onOpenFlow
   );
 };
 
-const CommemorationTab = ({ tag, hasMatched, onOpenSubView, spots }: { tag: string, hasMatched: boolean, onOpenSubView: (view: SubViewState) => void, spots: any[] }) => (
+const CommemorationTab = ({ tag, hasMatched, onOpenSubView, onSelectSpot, onOpenFlow, spots }: { tag: string, hasMatched: boolean, onOpenSubView: (view: SubViewState) => void, onSelectSpot: (spot: any) => void, onOpenFlow: (flow: FlowState) => void, spots: any[] }) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 pb-24 bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')] min-h-full">
     <header className="mb-8 pt-4 flex justify-between items-end">
       <div>
-        <h2 className="font-serif text-2xl tracking-[0.3em] text-cyan-blue">长安契约</h2>
+        <h2 className="font-serif text-2xl tracking-[0.3em] text-cyan-blue">长安合同</h2>
         <p className="text-silver-gray tracking-[0.2em] text-[9px] uppercase font-mono mt-1 opacity-70">Digital Commemoration / 数字纪念</p>
       </div>
       <div className="text-right">
@@ -505,7 +530,7 @@ const CommemorationTab = ({ tag, hasMatched, onOpenSubView, spots }: { tag: stri
               onClick={() => onOpenSubView('share-card')} 
               className="cursor-pointer"
             >
-              <TicketCard tag={tag} hasMatched={hasMatched} spots={spots} />
+              <TicketCard tag={tag} hasMatched={hasMatched} spots={spots} onSelectSpot={onSelectSpot} onOpenSubView={onOpenSubView} />
               <div className="mt-8 pt-6 border-t-[0.5px] border-dashed border-silver-gray/20 flex flex-col items-center gap-3">
                 <div className="flex items-center gap-4">
                   <div className="w-8 h-[1px] bg-silver-gray/20" />
@@ -542,7 +567,7 @@ const CommemorationTab = ({ tag, hasMatched, onOpenSubView, spots }: { tag: stri
                 <div className="pt-2 flex flex-col items-center gap-3">
                   <span className="text-[9px] text-silver-gray tracking-widest uppercase font-mono">Next Step / 下一步建议</span>
                   <button 
-                    onClick={() => onOpenSubView('peer-discovery')}
+                    onClick={() => onOpenFlow('peer-discovery')}
                     className="px-6 py-2 bg-cyan-blue text-mutton-white text-[10px] tracking-[0.2em] rounded-sm shadow-sm"
                   >
                     前往发现同好 / 完成实体拼合
@@ -619,7 +644,7 @@ const CommemorationTab = ({ tag, hasMatched, onOpenSubView, spots }: { tag: stri
   </motion.div>
 );
 
-const ProfileTab = ({ tag, nickname, bio, onOpenSubView, sensingEnabled, setSensingEnabled }: { tag: string, nickname: string, bio: string, onOpenSubView: (view: SubViewState) => void, sensingEnabled: boolean, setSensingEnabled: (v: boolean) => void }) => {
+const ProfileTab = ({ tag, nickname, bio, avatar, onOpenSubView, sensingEnabled, setSensingEnabled }: { tag: string, nickname: string, bio: string, avatar: string | null, onOpenSubView: (view: SubViewState) => void, sensingEnabled: boolean, setSensingEnabled: (v: boolean) => void }) => {
   const [isDiscoverable, setIsDiscoverable] = useState(true);
   const [notificationMode, setNotificationMode] = useState<'vibrate' | 'silent'>('vibrate');
 
@@ -648,7 +673,7 @@ const ProfileTab = ({ tag, nickname, bio, onOpenSubView, sensingEnabled, setSens
           >
             <div className="relative">
               <div className="w-16 h-16 rounded-full bg-cyan-blue/5 border-[1px] border-cyan-blue/10 flex items-center justify-center shrink-0 overflow-hidden">
-                <User className="text-cyan-blue/60" size={32} strokeWidth={1} />
+                {avatar ? <img src={avatar} alt="avatar" className="w-full h-full object-cover" /> : <User className="text-cyan-blue/60" size={32} strokeWidth={1} />}
               </div>
               <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-stamp-red rounded-full border-2 border-mutton-white flex items-center justify-center">
                 <div className="w-1.5 h-1.5 bg-mutton-white rounded-full animate-pulse" />
@@ -801,8 +826,12 @@ const BottomNav = ({ activeTab, onChange }: { activeTab: TabState, onChange: (t:
 // --- Independent Flows ---
 
 // Flow A: Activation
-const ActivationFlow = ({ onClose, onComplete }: { onClose: () => void, onComplete: (tag: string) => void }) => {
+const ActivationFlow = ({ onClose, onComplete }: { onClose: () => void, onComplete: (tag: string, nickname: string, bio: string, avatar: string | null) => void }) => {
   const [step, setStep] = useState(1);
+  const [tempName, setTempName] = useState('访客_8492');
+  const [tempBio, setTempBio] = useState('对长安的历史充满好奇。');
+  const [tempTag, setTempTag] = useState('汉服同袍');
+  const [tempAvatar, setTempAvatar] = useState<string | null>(null);
 
   useEffect(() => {
     if (step === 2) {
@@ -810,6 +839,17 @@ const ActivationFlow = ({ onClose, onComplete }: { onClose: () => void, onComple
       return () => clearTimeout(timer);
     }
   }, [step]);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setTempAvatar(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <motion.div 
@@ -839,74 +879,109 @@ const ActivationFlow = ({ onClose, onComplete }: { onClose: () => void, onComple
 
         <div className="flex-1 flex flex-col p-6 pt-0 overflow-y-auto">
           {/* 步骤进度区 */}
-          <div className="flex justify-center items-center gap-3 mb-10 mt-4">
-            <div className={`flex flex-col items-center gap-2 ${step >= 1 ? 'opacity-100' : 'opacity-30'}`}>
-              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-mono transition-colors ${step >= 1 ? 'bg-low-gold text-mutton-white shadow-sm' : 'bg-silver-gray/20 text-silver-gray'}`}>1</div>
-              <span className={`text-[9px] tracking-widest ${step >= 1 ? 'text-cyan-blue font-medium' : 'text-silver-gray'}`}>靠近鱼符</span>
+          <div className="flex justify-center items-center gap-2 mb-6 mt-4">
+            <div className={`flex flex-col items-center gap-1 ${step >= 1 ? 'opacity-100' : 'opacity-30'}`}>
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-mono transition-colors ${step >= 1 ? 'bg-low-gold text-mutton-white shadow-sm' : 'bg-silver-gray/20 text-silver-gray'}`}>1</div>
+              <span className={`text-[8px] tracking-widest ${step >= 1 ? 'text-cyan-blue font-medium' : 'text-silver-gray'}`}>靠近鱼符</span>
             </div>
-            <div className={`w-8 h-[1px] mb-4 transition-colors ${step >= 2 ? 'bg-low-gold/50' : 'bg-silver-gray/20'}`}></div>
-            <div className={`flex flex-col items-center gap-2 ${step >= 2 ? 'opacity-100' : 'opacity-30'}`}>
-              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-mono transition-colors ${step >= 2 ? 'bg-low-gold text-mutton-white shadow-sm' : 'bg-silver-gray/20 text-silver-gray'}`}>2</div>
-              <span className={`text-[9px] tracking-widest ${step >= 2 ? 'text-cyan-blue font-medium' : 'text-silver-gray'}`}>读取身份</span>
+            <div className={`w-4 h-[1px] mb-3 transition-colors ${step >= 2 ? 'bg-low-gold/50' : 'bg-silver-gray/20'}`}></div>
+            <div className={`flex flex-col items-center gap-1 ${step >= 2 ? 'opacity-100' : 'opacity-30'}`}>
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-mono transition-colors ${step >= 2 ? 'bg-low-gold text-mutton-white shadow-sm' : 'bg-silver-gray/20 text-silver-gray'}`}>2</div>
+              <span className={`text-[8px] tracking-widest ${step >= 2 ? 'text-cyan-blue font-medium' : 'text-silver-gray'}`}>读取身份</span>
             </div>
-            <div className={`w-8 h-[1px] mb-4 transition-colors ${step >= 3 ? 'bg-low-gold/50' : 'bg-silver-gray/20'}`}></div>
-            <div className={`flex flex-col items-center gap-2 ${step >= 3 ? 'opacity-100' : 'opacity-30'}`}>
-              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-mono transition-colors ${step >= 3 ? 'bg-low-gold text-mutton-white shadow-sm' : 'bg-silver-gray/20 text-silver-gray'}`}>3</div>
-              <span className={`text-[9px] tracking-widest ${step >= 3 ? 'text-cyan-blue font-medium' : 'text-silver-gray'}`}>完成激活</span>
+            <div className={`w-4 h-[1px] mb-3 transition-colors ${step >= 3 ? 'bg-low-gold/50' : 'bg-silver-gray/20'}`}></div>
+            <div className={`flex flex-col items-center gap-1 ${step >= 3 ? 'opacity-100' : 'opacity-30'}`}>
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-mono transition-colors ${step >= 3 ? 'bg-low-gold text-mutton-white shadow-sm' : 'bg-silver-gray/20 text-silver-gray'}`}>3</div>
+              <span className={`text-[8px] tracking-widest ${step >= 3 ? 'text-cyan-blue font-medium' : 'text-silver-gray'}`}>确认信息</span>
+            </div>
+            <div className={`w-4 h-[1px] mb-3 transition-colors ${step >= 4 ? 'bg-low-gold/50' : 'bg-silver-gray/20'}`}></div>
+            <div className={`flex flex-col items-center gap-1 ${step >= 4 ? 'opacity-100' : 'opacity-30'}`}>
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-mono transition-colors ${step >= 4 ? 'bg-low-gold text-mutton-white shadow-sm' : 'bg-silver-gray/20 text-silver-gray'}`}>4</div>
+              <span className={`text-[8px] tracking-widest ${step >= 4 ? 'text-cyan-blue font-medium' : 'text-silver-gray'}`}>完成激活</span>
             </div>
           </div>
 
           {/* 中部核心识别区 */}
           <div className="flex-1 flex flex-col items-center justify-center relative min-h-[200px] mb-8">
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              {/* 环形感应图形 */}
-              <motion.div 
-                animate={{ scale: step === 2 ? [1, 1.1, 1] : 1, opacity: step === 2 ? [0.3, 0.6, 0.3] : 0.3 }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="w-48 h-48 rounded-full border-[0.5px] border-low-gold/30 absolute"
-              />
-              <motion.div 
-                animate={{ scale: step === 2 ? [1, 1.2, 1] : 1, opacity: step === 2 ? [0.1, 0.3, 0.1] : 0.1 }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
-                className="w-64 h-64 rounded-full border-[0.5px] border-low-gold/20 absolute"
-              />
-              {step === 2 && (
+            {step !== 3 && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                {/* 环形感应图形 */}
                 <motion.div 
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1.5, opacity: 0 }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="w-32 h-32 rounded-full bg-low-gold/10 absolute"
+                  animate={{ scale: step === 2 ? [1, 1.1, 1] : 1, opacity: step === 2 ? [0.3, 0.6, 0.3] : 0.3 }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="w-48 h-48 rounded-full border-[0.5px] border-low-gold/30 absolute"
                 />
-              )}
-            </div>
-            
-            <div className="w-28 h-28 bg-mutton-white rounded-full shadow-[0_8px_30px_rgba(184,161,114,0.15)] flex items-center justify-center relative z-10 border-[0.5px] border-low-gold/40">
-              {step === 3 ? (
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}>
-                  <CheckCircle2 className="w-12 h-12 text-low-gold" strokeWidth={1.5} />
-                </motion.div>
-              ) : (
-                <Scan className={`w-12 h-12 text-cyan-blue ${step === 2 ? 'animate-pulse' : ''}`} strokeWidth={1.5} />
-              )}
-            </div>
-            
-            <p className="mt-8 text-sm text-cyan-blue tracking-[0.2em] font-serif relative z-10">
-              {step === 1 ? '准备激活票证' : step === 2 ? '正在识别...' : '激活成功'}
-            </p>
-            {step === 2 && (
-              <p className="text-[9px] text-silver-gray tracking-widest font-mono mt-2 uppercase">Reading NFC Data</p>
+                <motion.div 
+                  animate={{ scale: step === 2 ? [1, 1.2, 1] : 1, opacity: step === 2 ? [0.1, 0.3, 0.1] : 0.1 }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
+                  className="w-64 h-64 rounded-full border-[0.5px] border-low-gold/20 absolute"
+                />
+                {step === 2 && (
+                  <motion.div 
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1.5, opacity: 0 }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="w-32 h-32 rounded-full bg-low-gold/10 absolute"
+                  />
+                )}
+              </div>
             )}
-            {step === 3 && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 w-full p-4 border-[0.5px] border-silver-gray/20 bg-mutton-white rounded-sm shadow-sm space-y-3 relative z-10">
-                <div className="flex justify-between items-center border-b-[0.5px] border-silver-gray/10 pb-3">
-                  <span className="text-[10px] text-silver-gray tracking-widest uppercase">Talisman ID / 票证编号</span>
-                  <span className="text-sm text-cyan-blue font-mono tracking-wider">CA-8492</span>
+            
+            {step === 3 ? (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="w-full space-y-4 relative z-10">
+                <div className="flex justify-center mb-2">
+                  <label className="w-20 h-20 rounded-full bg-cyan-blue/5 border-[1px] border-cyan-blue/20 flex items-center justify-center relative cursor-pointer overflow-hidden">
+                    {tempAvatar ? <img src={tempAvatar} alt="avatar" className="w-full h-full object-cover" /> : <User className="text-cyan-blue" size={32} strokeWidth={1.5} />}
+                    <div className="absolute bottom-0 right-0 w-6 h-6 bg-mutton-white rounded-full border-[1px] border-silver-gray/20 flex items-center justify-center shadow-sm">
+                      <Scan size={10} className="text-cyan-blue" />
+                    </div>
+                    <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+                  </label>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] text-silver-gray tracking-widest uppercase">Identity Tag / 身份标签</span>
-                  <span className="text-[10px] text-low-gold bg-low-gold/10 px-3 py-1 rounded-sm tracking-widest border-[0.5px] border-low-gold/30">汉服同袍</span>
+                <div>
+                  <label className="block text-[10px] text-silver-gray tracking-widest mb-1">昵称</label>
+                  <input type="text" value={tempName} onChange={e => setTempName(e.target.value)} className="w-full p-3 bg-mutton-white border-[1px] border-silver-gray/20 rounded-sm text-cyan-blue text-sm tracking-widest focus:outline-none focus:border-cyan-blue" />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-silver-gray tracking-widest mb-1">身份标签</label>
+                  <input type="text" value={tempTag} onChange={e => setTempTag(e.target.value)} className="w-full p-3 bg-mutton-white border-[1px] border-silver-gray/20 rounded-sm text-cyan-blue text-sm tracking-widest focus:outline-none focus:border-cyan-blue" />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-silver-gray tracking-widest mb-1">个人简介</label>
+                  <textarea rows={2} value={tempBio} onChange={e => setTempBio(e.target.value)} className="w-full p-3 bg-mutton-white border-[1px] border-silver-gray/20 rounded-sm text-cyan-blue text-sm tracking-widest focus:outline-none focus:border-cyan-blue resize-none"></textarea>
                 </div>
               </motion.div>
+            ) : (
+              <>
+                <div className="w-28 h-28 bg-mutton-white rounded-full shadow-[0_8px_30px_rgba(184,161,114,0.15)] flex items-center justify-center relative z-10 border-[0.5px] border-low-gold/40">
+                  {step === 4 ? (
+                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}>
+                      <CheckCircle2 className="w-12 h-12 text-low-gold" strokeWidth={1.5} />
+                    </motion.div>
+                  ) : (
+                    <Scan className={`w-12 h-12 text-cyan-blue ${step === 2 ? 'animate-pulse' : ''}`} strokeWidth={1.5} />
+                  )}
+                </div>
+                
+                <p className="mt-8 text-sm text-cyan-blue tracking-[0.2em] font-serif relative z-10">
+                  {step === 1 ? '准备激活票证' : step === 2 ? '正在识别...' : '激活成功'}
+                </p>
+                {step === 2 && (
+                  <p className="text-[9px] text-silver-gray tracking-widest font-mono mt-2 uppercase">Reading NFC Data</p>
+                )}
+                {step === 4 && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 w-full p-4 border-[0.5px] border-silver-gray/20 bg-mutton-white rounded-sm shadow-sm space-y-3 relative z-10">
+                    <div className="flex justify-between items-center border-b-[0.5px] border-silver-gray/10 pb-3">
+                      <span className="text-[10px] text-silver-gray tracking-widest uppercase">Talisman ID / 票证编号</span>
+                      <span className="text-sm text-cyan-blue font-mono tracking-wider">CA-8492</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] text-silver-gray tracking-widest uppercase">Identity Tag / 身份标签</span>
+                      <span className="text-[10px] text-low-gold bg-low-gold/10 px-3 py-1 rounded-sm tracking-widest border-[0.5px] border-low-gold/30">{tempTag}</span>
+                    </div>
+                  </motion.div>
+                )}
+              </>
             )}
           </div>
 
@@ -929,7 +1004,12 @@ const ActivationFlow = ({ onClose, onComplete }: { onClose: () => void, onComple
               </div>
             )}
             {step === 3 && (
-              <button onClick={() => onComplete('汉服同袍')} className="w-full py-4 bg-low-gold text-mutton-white tracking-[0.3em] text-sm rounded-sm shadow-xl active:scale-[0.97] transition-all font-bold uppercase font-mono">
+              <button onClick={() => setStep(4)} className="w-full py-4 bg-cyan-blue text-mutton-white tracking-[0.3em] text-sm rounded-sm shadow-xl active:scale-[0.97] transition-all font-bold uppercase font-mono">
+                确认信息
+              </button>
+            )}
+            {step === 4 && (
+              <button onClick={() => onComplete(tempTag, tempName, tempBio, tempAvatar)} className="w-full py-4 bg-low-gold text-mutton-white tracking-[0.3em] text-sm rounded-sm shadow-xl active:scale-[0.97] transition-all font-bold uppercase font-mono">
                 Enter Changan / 进入首页
               </button>
             )}
@@ -1465,13 +1545,18 @@ const PeerDiscoveryFlow = ({ onClose, onGoToMatch, onGoToSettings }: { onClose: 
 
 // --- Sub Views ---
 const FullScreenView = ({ title, subtitle, onClose, children }: { title: string, subtitle?: string, onClose: () => void, children: React.ReactNode }) => (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-cyan-blue/40 backdrop-blur-sm p-4">
+  <motion.div 
+    initial={{ opacity: 0 }} 
+    animate={{ opacity: 1 }} 
+    exit={{ opacity: 0 }} 
+    className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-4"
+  >
     <motion.div 
-      initial={{ opacity: 0, scale: 0.95, y: 20 }} 
-      animate={{ opacity: 1, scale: 1, y: 0 }} 
-      exit={{ opacity: 0, scale: 0.95, y: 20 }} 
+      initial={{ y: '100%', opacity: 0 }} 
+      animate={{ y: 0, opacity: 1 }} 
+      exit={{ y: '100%', opacity: 0 }} 
       transition={{ type: 'spring', damping: 25, stiffness: 200 }} 
-      className="w-full max-w-[420px] max-h-[90vh] bg-[var(--color-bg-base)] rounded-[28px] shadow-2xl overflow-hidden flex flex-col relative"
+      className="w-full max-w-[420px] h-[90vh] bg-[var(--color-bg-base)] rounded-[28px] shadow-2xl overflow-hidden flex flex-col relative"
     >
       <div className="p-6 pt-8 flex justify-between items-start bg-mutton-white border-b-[0.5px] border-silver-gray/10 shrink-0">
         <div>
@@ -1486,7 +1571,7 @@ const FullScreenView = ({ title, subtitle, onClose, children }: { title: string,
         {children}
       </div>
     </motion.div>
-  </div>
+  </motion.div>
 );
 
 const InstructionsView = ({ onClose }: { onClose: () => void }) => (
@@ -1496,6 +1581,32 @@ const InstructionsView = ({ onClose }: { onClose: () => void }) => (
       <p>2. 碰一碰激活：使用手机 NFC 触碰鱼符，激活您的数字身份。</p>
       <p>3. 探索打卡：前往地图上的推荐点位，再次使用 NFC 触碰感应区，解锁文物并收集徽章。</p>
       <p>4. 寻找契合：遇到持有另一半鱼符的同好，将两枚鱼符物理拼合，触发双鱼感应，生成完整的长安合同。</p>
+    </div>
+  </FullScreenView>
+);
+
+const RelicDetailsView = ({ spot, onClose }: { spot: any, onClose: () => void }) => (
+  <FullScreenView title="印记详情" subtitle="Relic Details" onClose={onClose}>
+    <div className="p-6 flex flex-col items-center">
+      <div className="w-32 h-32 rounded-full bg-low-gold/10 border-[2px] border-low-gold/40 flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(184,161,114,0.2)]">
+        <Ticket size={48} className="text-low-gold" />
+      </div>
+      <h3 className="font-serif text-2xl text-cyan-blue tracking-widest mb-2">{spot?.relic}</h3>
+      <p className="text-xs text-silver-gray tracking-widest uppercase font-mono mb-8">Official Souvenir Stamp</p>
+      
+      <div className="w-full bg-mutton-white border-[0.5px] border-silver-gray/20 p-6 rounded-sm shadow-sm space-y-4">
+        <div>
+          <p className="text-[10px] text-silver-gray tracking-widest mb-1">来源点位</p>
+          <p className="text-sm text-cyan-blue tracking-widest font-medium">{spot?.name}</p>
+        </div>
+        <div className="w-full h-[0.5px] bg-silver-gray/20"></div>
+        <div>
+          <p className="text-[10px] text-silver-gray tracking-widest mb-2">印记故事</p>
+          <p className="text-xs text-cyan-blue/80 tracking-widest leading-relaxed">
+            这枚印记代表了你在长安之旅中的一次重要探索。它不仅是数字纪念，更是你与这座城市历史连接的证明。
+          </p>
+        </div>
+      </div>
     </div>
   </FullScreenView>
 );
@@ -1527,30 +1638,48 @@ const SpotDetailsView = ({ spot, onClose, onCheckIn }: { spot: any, onClose: () 
   </FullScreenView>
 );
 
-const EditProfileView = ({ nickname, bio, onSave, onClose }: { nickname: string, bio: string, onSave: (n: string, b: string) => void, onClose: () => void }) => {
+const EditProfileView = ({ nickname, bio, tag, avatar, onSave, onClose }: { nickname: string, bio: string, tag: string, avatar: string | null, onSave: (n: string, b: string, t: string, a: string | null) => void, onClose: () => void }) => {
   const [tempName, setTempName] = useState(nickname);
   const [tempBio, setTempBio] = useState(bio);
+  const [tempTag, setTempTag] = useState(tag);
+  const [tempAvatar, setTempAvatar] = useState(avatar);
+  
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setTempAvatar(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
   <FullScreenView title="编辑个人信息" subtitle="Edit Profile" onClose={onClose}>
     <div className="p-6 space-y-6">
       <div className="flex justify-center mb-8">
-        <div className="w-24 h-24 rounded-full bg-cyan-blue/5 border-[1px] border-cyan-blue/20 flex items-center justify-center relative">
-          <User className="text-cyan-blue" size={40} strokeWidth={1.5} />
+        <label className="w-24 h-24 rounded-full bg-cyan-blue/5 border-[1px] border-cyan-blue/20 flex items-center justify-center relative cursor-pointer overflow-hidden">
+          {tempAvatar ? <img src={tempAvatar} alt="avatar" className="w-full h-full object-cover" /> : <User className="text-cyan-blue" size={40} strokeWidth={1.5} />}
           <div className="absolute bottom-0 right-0 w-8 h-8 bg-mutton-white rounded-full border-[1px] border-silver-gray/20 flex items-center justify-center shadow-sm">
             <Scan size={14} className="text-cyan-blue" />
           </div>
-        </div>
+          <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+        </label>
       </div>
       <div>
         <label className="block text-xs text-silver-gray tracking-widest mb-2">昵称</label>
         <input type="text" value={tempName} onChange={e => setTempName(e.target.value)} className="w-full p-4 bg-mutton-white border-[1px] border-silver-gray/20 rounded-sm text-cyan-blue tracking-widest focus:outline-none focus:border-cyan-blue" />
       </div>
       <div>
+        <label className="block text-xs text-silver-gray tracking-widest mb-2">身份标签</label>
+        <input type="text" value={tempTag} onChange={e => setTempTag(e.target.value)} className="w-full p-4 bg-mutton-white border-[1px] border-silver-gray/20 rounded-sm text-cyan-blue tracking-widest focus:outline-none focus:border-cyan-blue" />
+      </div>
+      <div>
         <label className="block text-xs text-silver-gray tracking-widest mb-2">个人简介</label>
         <textarea rows={3} value={tempBio} onChange={e => setTempBio(e.target.value)} className="w-full p-4 bg-mutton-white border-[1px] border-silver-gray/20 rounded-sm text-cyan-blue tracking-widest focus:outline-none focus:border-cyan-blue resize-none"></textarea>
       </div>
-      <button onClick={() => { onSave(tempName, tempBio); onClose(); }} className="w-full py-4 bg-cyan-blue text-mutton-white tracking-[0.2em] text-sm rounded-sm shadow-md active:scale-[0.98] transition-transform mt-8">
+      <button onClick={() => { onSave(tempName, tempBio, tempTag, tempAvatar); onClose(); }} className="w-full py-4 bg-cyan-blue text-mutton-white tracking-[0.2em] text-sm rounded-sm shadow-md active:scale-[0.98] transition-transform mt-8">
         保存更改
       </button>
     </div>
@@ -1597,21 +1726,41 @@ const IdentityTagView = ({ tag, onSave, onClose }: { tag: string, onSave: (t: st
 
 const HistoricalTicketsView = ({ onClose, onOpenTicket }: { onClose: () => void, onOpenTicket: () => void }) => (
   <FullScreenView title="历史票证" subtitle="Historical Tickets" onClose={onClose}>
-    <div className="p-6 space-y-4">
+    <div className="p-6 space-y-4 bg-silver-gray/5 min-h-full">
       {[
-        { date: '2025.10.01', tag: '汉服同袍', id: 'CA-7721' },
-        { date: '2025.05.18', tag: '馆展同好', id: 'CA-3309' },
+        { date: '2025.10.01', tag: '汉服同袍', id: 'CA-7721', title: '大唐遗宝展' },
+        { date: '2025.05.18', tag: '馆展同好', id: 'CA-3309', title: '长安十二时辰' },
       ].map((ticket, i) => (
-        <div key={i} onClick={onOpenTicket} className="p-5 rounded-sm border-[1px] border-silver-gray/10 bg-mutton-white shadow-sm flex justify-between items-center cursor-pointer hover:border-cyan-blue/30 transition-colors">
-          <div>
-            <h4 className="font-serif text-md text-cyan-blue tracking-widest mb-1">长安合同</h4>
-            <p className="text-xs text-silver-gray tracking-widest font-mono">{ticket.date}</p>
+        <motion.div 
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          key={i} 
+          onClick={onOpenTicket} 
+          className="relative bg-mutton-white rounded-sm shadow-sm border-[0.5px] border-silver-gray/20 cursor-pointer overflow-hidden flex"
+        >
+          {/* Left Stub */}
+          <div className="w-12 bg-cyan-blue/5 border-r-[1.5px] border-dashed border-silver-gray/20 flex flex-col items-center justify-center py-4 relative shrink-0">
+            <div className="absolute -top-2 -right-2 w-4 h-4 bg-[#f4f4f5] rounded-full border-b-[0.5px] border-l-[0.5px] border-silver-gray/20 z-10"></div>
+            <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-[#f4f4f5] rounded-full border-t-[0.5px] border-l-[0.5px] border-silver-gray/20 z-10"></div>
+            <Ticket size={16} className="text-cyan-blue/40 mb-2" />
+            <span className="font-mono text-[8px] text-cyan-blue/60 tracking-widest" style={{ writingMode: 'vertical-rl' }}>{ticket.id}</span>
           </div>
-          <div className="text-right">
-            <span className="text-xs text-silver-gray tracking-widest bg-silver-gray/5 px-3 py-1 rounded-sm mb-2 inline-block">{ticket.tag}</span>
-            <p className="text-[10px] text-silver-gray tracking-widest font-mono">NO. {ticket.id}</p>
+          
+          {/* Right Content */}
+          <div className="flex-1 p-5 flex justify-between items-center">
+            <div>
+              <h4 className="font-serif text-base text-cyan-blue tracking-widest mb-1">{ticket.title}</h4>
+              <p className="text-[10px] text-silver-gray tracking-widest font-mono uppercase">{ticket.date}</p>
+            </div>
+            <div className="text-right flex flex-col items-end">
+              <span className="text-[10px] text-stamp-red tracking-widest border-[0.5px] border-stamp-red/20 bg-stamp-red/5 px-2 py-1 rounded-sm mb-2 inline-block font-serif">{ticket.tag}</span>
+              <div className="flex items-center gap-1 text-silver-gray">
+                <span className="text-[9px] tracking-widest uppercase font-mono">View</span>
+                <ChevronRight size={12} />
+              </div>
+            </div>
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
   </FullScreenView>
@@ -1746,6 +1895,7 @@ export default function App() {
   const [userTag, setUserTag] = useState(''); // Empty initially to show Activation flow
   const [nickname, setNickname] = useState('访客_8492');
   const [bio, setBio] = useState('对长安的历史充满好奇。');
+  const [avatar, setAvatar] = useState<string | null>(null);
   const [selectedSpot, setSelectedSpot] = useState<any>(null);
   const [hasInitialized, setHasInitialized] = useState(false);
   const [hasMatched, setHasMatched] = useState(false);
@@ -1754,7 +1904,7 @@ export default function App() {
 
   const [spots, setSpots] = useState([
     { id: 1, name: '镶金兽首玛瑙杯', status: '未打卡', relic: '玛瑙杯' },
-    { id: 2, name: '鎏金舞马衔杯纹银壶', status: '已打卡', relic: '舞马银壶' },
+    { id: 2, name: '鎏金舞马衔杯纹银壶', status: '未打卡', relic: '舞马银壶' },
     { id: 3, name: '皇后之玺', status: '未打卡', relic: '皇后玺' },
   ]);
 
@@ -1778,9 +1928,9 @@ export default function App() {
     <div className="max-w-md mx-auto h-screen shadow-2xl overflow-hidden relative bg-[var(--color-bg-base)] flex flex-col">
       {/* Main Tabs Area */}
       <div className="flex-1 overflow-y-auto">
-        {activeTab === 'home' && <HomeTab onOpenFlow={setActiveFlow} tag={userTag} hasMatched={hasMatched} spots={spots} sensingEnabled={sensingEnabled} onChangeTab={setActiveTab} />}
+        {activeTab === 'home' && <HomeTab onOpenFlow={setActiveFlow} onOpenSubView={setSubViewState} tag={userTag} hasMatched={hasMatched} spots={spots} sensingEnabled={sensingEnabled} onChangeTab={setActiveTab} />}
         {activeTab === 'map' && <MapTab onOpenFlow={setActiveFlow} onOpenSubView={setSubViewState} onSelectSpot={setSelectedSpot} spots={spots} />}
-        {activeTab === 'commemoration' && <CommemorationTab tag={userTag} hasMatched={hasMatched} onOpenSubView={setSubViewState} spots={spots} />}
+        {activeTab === 'commemoration' && <CommemorationTab tag={userTag} hasMatched={hasMatched} onOpenSubView={setSubViewState} onSelectSpot={setSelectedSpot} onOpenFlow={setActiveFlow} spots={spots} />}
         {activeTab === 'profile' && <ProfileTab tag={userTag} nickname={nickname} bio={bio} onOpenSubView={setSubViewState} sensingEnabled={sensingEnabled} setSensingEnabled={setSensingEnabled} />}
       </div>
 
@@ -1790,7 +1940,13 @@ export default function App() {
       {/* Independent Flows (Overlays) */}
       <AnimatePresence>
         {activeFlow === 'activation' && (
-          <ActivationFlow onClose={() => setActiveFlow('none')} onComplete={(tag) => { setUserTag(tag); setActiveFlow('none'); }} />
+          <ActivationFlow onClose={() => setActiveFlow('none')} onComplete={(tag, n, b, a) => { 
+            setUserTag(tag); 
+            setNickname(n);
+            setBio(b);
+            if (a) setAvatar(a);
+            setActiveFlow('none'); 
+          }} />
         )}
         {activeFlow === 'checkin' && (
           <CheckInFlow onClose={handleCheckInComplete} spot={selectedSpot || spots[0]} />
@@ -1812,7 +1968,7 @@ export default function App() {
           <SpotDetailsView spot={selectedSpot} onClose={() => setSubViewState('none')} onCheckIn={() => { setSubViewState('none'); setActiveFlow('checkin'); }} />
         )}
         {subViewState === 'edit-profile' && (
-          <EditProfileView nickname={nickname} bio={bio} onSave={(n, b) => { setNickname(n); setBio(b); }} onClose={() => setSubViewState('none')} />
+          <EditProfileView nickname={nickname} bio={bio} tag={userTag} avatar={avatar} onSave={(n, b, t, a) => { setNickname(n); setBio(b); setUserTag(t); setAvatar(a); }} onClose={() => setSubViewState('none')} />
         )}
         {subViewState === 'identity-tag' && (
           <IdentityTagView tag={userTag} onSave={setUserTag} onClose={() => setSubViewState('none')} />
