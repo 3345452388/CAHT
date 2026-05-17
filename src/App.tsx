@@ -599,26 +599,36 @@ const CommemorationTab = ({ tag, hasMatched, onOpenSubView, onSelectSpot, onOpen
             <motion.div 
               key={i} 
               whileHover={isCompleted ? { y: -4 } : {}}
+              onClick={() => {
+                if (isCompleted) {
+                  onSelectSpot(spot);
+                  onOpenSubView('relic-details');
+                }
+              }}
               className={`aspect-square border-[0.5px] flex flex-col items-center justify-center gap-2 relative overflow-hidden transition-all duration-500
-                ${isCompleted ? 'bg-mutton-white border-low-gold/30 shadow-md' : 'bg-silver-gray/5 border-silver-gray/10 opacity-40'}`}
+                ${isCompleted ? 'bg-mutton-white border-low-gold/30 shadow-md cursor-pointer' : 'bg-silver-gray/5 border-silver-gray/10 opacity-40'}`}
             >
               {/* 印章背景纹理 */}
               {isCompleted && (
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')] opacity-20 mix-blend-multiply" />
               )}
               
-              <div className={`w-12 h-12 rounded-full border-[1.5px] flex items-center justify-center relative
-                ${isCompleted ? 'border-stamp-red/60 text-stamp-red shadow-inner' : 'border-silver-gray/20 text-silver-gray'}`}>
+              <div className={`w-12 h-12 rounded-full border-[1.5px] flex items-center justify-center relative overflow-hidden
+                ${isCompleted ? 'border-stamp-red/60 text-stamp-red shadow-inner bg-mutton-white/50' : 'border-silver-gray/20 text-silver-gray'}`}>
                 {isCompleted && (
                   <motion.div 
                     initial={{ scale: 1.5, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="absolute inset-0 border-[4px] border-stamp-red/5 rounded-full"
+                    className="absolute inset-0 border-[4px] border-stamp-red/5 rounded-full z-10"
                   />
                 )}
-                <span className="font-serif text-xs font-bold leading-tight text-center px-1" style={{ writingMode: 'vertical-rl' }}>
-                  {isCompleted ? spot.relic : '未获'}
-                </span>
+                {isCompleted && spot.badgeIcon ? (
+                  <img src={spot.badgeIcon} className="w-full h-full object-cover" alt={spot.relic} />
+                ) : (
+                  <span className="font-serif text-xs font-bold leading-tight text-center px-1" style={{ writingMode: 'vertical-rl' }}>
+                    {isCompleted ? spot.relic : '未获'}
+                  </span>
+                )}
               </div>
               <span className="text-[8px] tracking-widest text-silver-gray uppercase font-mono mt-1">
                 {isCompleted ? 'Acquired' : 'Locked'}
@@ -1221,7 +1231,7 @@ const MatchFlow = ({ onClose, tag, onComplete }: { onClose: () => void, tag: str
                 {/* 拼合动画 */}
                 <div className="relative w-28 h-28">
                   <motion.div
-                    animate={isVerifying ? { x: 6, y: 0, rotate: 0, scale: 1.05 } : { x: -24, y: 12, rotate: -25 }}
+                    animate={isVerifying ? { x: 0, y: 0, rotate: 0, scale: 1.05 } : { x: -24, y: 12, rotate: -25 }}
                     transition={{ type: "spring", stiffness: 250, damping: 18 }}
                     className="absolute inset-0 z-20"
                   >
@@ -1229,7 +1239,7 @@ const MatchFlow = ({ onClose, tag, onComplete }: { onClose: () => void, tag: str
                   </motion.div>
                   
                   <motion.div
-                    animate={isVerifying ? { x: -6, y: 0, rotate: 0, scale: 1.05 } : { x: 24, y: -12, rotate: 25 }}
+                    animate={isVerifying ? { x: 0, y: 0, rotate: 0, scale: 1.05 } : { x: 24, y: -12, rotate: 25 }}
                     transition={{ type: "spring", stiffness: 250, damping: 18 }}
                     className="absolute inset-0 z-20"
                   >
@@ -1369,10 +1379,10 @@ const MatchFlow = ({ onClose, tag, onComplete }: { onClose: () => void, tag: str
               
               <div className="relative w-full max-w-[200px] aspect-square flex items-center justify-center opacity-80">
                 <div className="relative w-24 h-24">
-                  <div className="absolute inset-0 z-20 translate-x-3">
+                  <div className="absolute inset-0 z-20">
                     <TwinFishLeft className="w-full h-full text-cyan-blue drop-shadow-sm" />
                   </div>
-                  <div className="absolute inset-0 z-20 -translate-x-3">
+                  <div className="absolute inset-0 z-20">
                     <TwinFishRight className="w-full h-full text-low-gold drop-shadow-sm" />
                   </div>
                 </div>
@@ -1588,8 +1598,12 @@ const InstructionsView = ({ onClose }: { onClose: () => void }) => (
 const RelicDetailsView = ({ spot, onClose }: { spot: any, onClose: () => void }) => (
   <FullScreenView title="印记详情" subtitle="Relic Details" onClose={onClose}>
     <div className="p-6 flex flex-col items-center">
-      <div className="w-32 h-32 rounded-full bg-low-gold/10 border-[2px] border-low-gold/40 flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(184,161,114,0.2)]">
-        <Ticket size={48} className="text-low-gold" />
+      <div className="w-32 h-32 rounded-full bg-low-gold/10 border-[2px] border-low-gold/40 flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(184,161,114,0.2)] overflow-hidden">
+        {spot?.badgeIcon ? (
+          <img src={spot.badgeIcon} alt={spot?.relic} className="w-full h-full object-cover" />
+        ) : (
+          <Ticket size={48} className="text-low-gold" />
+        )}
       </div>
       <h3 className="font-serif text-2xl text-cyan-blue tracking-widest mb-2">{spot?.relic}</h3>
       <p className="text-xs text-silver-gray tracking-widest uppercase font-mono mb-8">Official Souvenir Stamp</p>
@@ -1611,10 +1625,13 @@ const RelicDetailsView = ({ spot, onClose }: { spot: any, onClose: () => void })
   </FullScreenView>
 );
 
-const SpotDetailsView = ({ spot, onClose, onCheckIn }: { spot: any, onClose: () => void, onCheckIn: () => void }) => (
+const SpotDetailsView = ({ spot, onClose, onCheckIn }: { spot: any, onClose: () => void, onCheckIn: () => void }) => {
+  const bgImage = spot?.id === 1 ? 'https://openaccess-cdn.clevelandart.org/1983.24/1983.24_web.jpg' : `https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=800&auto=format&fit=crop&seed=${spot?.name}`;
+
+  return (
   <FullScreenView title="点位详情" subtitle="Spot Details" onClose={onClose}>
     <div className="w-full h-64 bg-cyan-blue relative">
-      <img src={`https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=800&auto=format&fit=crop&seed=${spot?.name}`} className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity" alt={spot?.name} referrerPolicy="no-referrer" />
+      <img src={bgImage} className="absolute inset-0 w-full h-full object-contain opacity-80 mix-blend-luminosity" alt={spot?.name} referrerPolicy="no-referrer" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[var(--color-bg-base)]"></div>
     </div>
     <div className="p-6 -mt-12 relative z-10">
@@ -1636,7 +1653,7 @@ const SpotDetailsView = ({ spot, onClose, onCheckIn }: { spot: any, onClose: () 
       </div>
     </div>
   </FullScreenView>
-);
+)};
 
 const EditProfileView = ({ nickname, bio, tag, avatar, onSave, onClose }: { nickname: string, bio: string, tag: string, avatar: string | null, onSave: (n: string, b: string, t: string, a: string | null) => void, onClose: () => void }) => {
   const [tempName, setTempName] = useState(nickname);
@@ -1903,7 +1920,7 @@ export default function App() {
   const [sensingEnabled, setSensingEnabled] = useState(true);
 
   const [spots, setSpots] = useState([
-    { id: 1, name: '镶金兽首玛瑙杯', status: '未打卡', relic: '玛瑙杯' },
+    { id: 1, name: '唐三彩女立俑', status: '未打卡', relic: '女立俑', badgeImage: 'https://openaccess-cdn.clevelandart.org/1983.24/1983.24_web.jpg', badgeIcon: '/sancai-badge.png' },
     { id: 2, name: '鎏金舞马衔杯纹银壶', status: '未打卡', relic: '舞马银壶' },
     { id: 3, name: '皇后之玺', status: '未打卡', relic: '皇后玺' },
   ]);
@@ -1931,7 +1948,7 @@ export default function App() {
         {activeTab === 'home' && <HomeTab onOpenFlow={setActiveFlow} onOpenSubView={setSubViewState} tag={userTag} hasMatched={hasMatched} spots={spots} sensingEnabled={sensingEnabled} onChangeTab={setActiveTab} />}
         {activeTab === 'map' && <MapTab onOpenFlow={setActiveFlow} onOpenSubView={setSubViewState} onSelectSpot={setSelectedSpot} spots={spots} />}
         {activeTab === 'commemoration' && <CommemorationTab tag={userTag} hasMatched={hasMatched} onOpenSubView={setSubViewState} onSelectSpot={setSelectedSpot} onOpenFlow={setActiveFlow} spots={spots} />}
-        {activeTab === 'profile' && <ProfileTab tag={userTag} nickname={nickname} bio={bio} onOpenSubView={setSubViewState} sensingEnabled={sensingEnabled} setSensingEnabled={setSensingEnabled} />}
+        {activeTab === 'profile' && <ProfileTab tag={userTag} nickname={nickname} bio={bio} avatar={avatar} onOpenSubView={setSubViewState} sensingEnabled={sensingEnabled} setSensingEnabled={setSensingEnabled} />}
       </div>
 
       {/* Bottom Navigation */}
@@ -1998,6 +2015,9 @@ export default function App() {
         )}
         {subViewState === 'sensing-settings' && (
           <SensingSettingsView onClose={() => setSubViewState('none')} />
+        )}
+        {subViewState === 'relic-details' && (
+          <RelicDetailsView spot={selectedSpot} onClose={() => setSubViewState('none')} />
         )}
       </AnimatePresence>
     </div>
